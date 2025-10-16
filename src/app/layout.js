@@ -3,6 +3,7 @@ import StyledComponentsRegistry from "../lib/registry";
 import Header from "../components/Layout/Header";
 import { Layout } from "antd";
 import "./globals.css";
+import PageLoader from "@/components/common/PageLoader";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         <StyledComponentsRegistry>
           <Layout className="min-h-screen">
             <Header />
+            <PageLoader />
             {children}
           </Layout>
         </StyledComponentsRegistry>

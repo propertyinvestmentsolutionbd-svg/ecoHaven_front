@@ -37,7 +37,43 @@ a {
 .ant-card {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
+/* Smooth transitions for loading spinner */
+.loading-enter {
+  opacity: 0;
+}
 
+.loading-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.loading-exit {
+  opacity: 1;
+}
+
+.loading-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+/* Backdrop blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom animation for progress bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
 /* Responsive improvements */
 @media (max-width: 640px) {
   .ant-form-item-label {
