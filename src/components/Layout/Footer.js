@@ -26,11 +26,11 @@ export default function Footer() {
           <Image
             src="/logo.png"
             alt="Logo"
-            width={120}
-            height={40}
+            width={100}
+            height={100}
             className="object-contain"
           />
-          <p className="mt-4 leading-relaxed text-white text-sm">
+          <p className="mt-4 leading-relaxed text-white text-[18px]">
             Pioneering sustainable and innovative real estate development in
             Bangladesh. We build communities, not just structures.
           </p>
@@ -38,25 +38,25 @@ export default function Footer() {
 
         {/* Middle */}
         <div className="w-1/4">
-          <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
-          <ul className="list-disc list-inside text-sm space-y-2">
-            <li>
-              <a href="#" className="hover:underline">
+          <h3 className="text-[18px] font-semibold my-[18px]">Quick Links</h3>
+          <ul className="ml-[10px] list-disc list-inside  ">
+            <li className="mt-[20px]">
+              <a href="#" className="hover:underline text-[18px]">
                 About Us
               </a>
             </li>
-            <li>
-              <a href="#" className="hover:underline">
+            <li className="mt-[10px]">
+              <a href="#" className="hover:underline text-[18px]">
                 Our Projects
               </a>
             </li>
-            <li>
-              <a href="#" className="hover:underline">
+            <li className="mt-[10px]">
+              <a href="#" className="hover:underline text-[18px]">
                 Careers
               </a>
             </li>
-            <li>
-              <a href="#" className="hover:underline">
+            <li className="mt-[10px]">
+              <a href="#" className="hover:underline text-[18px]">
                 Contact
               </a>
             </li>
@@ -65,17 +65,22 @@ export default function Footer() {
 
         {/* Right */}
         <div className="w-1/4">
-          <h3 className="text-xl font-semibold mb-4 mt-[30px]">Contact Us</h3>
-          <p className="text-base mb-3">
-            <span className="font-medium">Head Office:</span> Jalshiri Abashon
+          <h3 className="text-[18px] font-semibold mb-4 mt-[30px] mb-[10px]">
+            Contact Us
+          </h3>
+          <p className="text-base my-[10px]">
+            <span className="font-medium text-[18px]">Head Office:</span>{" "}
+            Jalshiri Abashon
           </p>
-          <p className="text-base mb-3">+880 17xxxxxxx</p>
-          <p className="text-base mb-6">eco-havenbd@gmail.com</p>
+          <p className="text-base my-[10px] text-[18px]">+880 17xxxxxxx</p>
+          <p className="text-base my-[10px] text-[18px]">
+            eco-havenbd@gmail.com
+          </p>
 
           {/* Follow Us Section */}
-          <div className="mt-4">
-            <h3 className="text-xl font-semibold my-[10px]">Follow Us</h3>
-            <div className="flex space-x-[10px]">
+          <div className="mt-[10px]">
+            <h3 className="text-[18px] font-semibold my-[10px]">Follow Us</h3>
+            <div className="flex space-x-[12px]">
               <a
                 href="#"
                 className="text-white hover:text-blue-400 transition-colors duration-200"
@@ -101,16 +106,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* WhatsApp Floating */}
-      <a
-        href="https://wa.me/88017xxxxxxx"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-[10000] bg-[#25D366] hover:bg-[#22bb58] text-white p-3 rounded-full shadow-lg transition-transform hover:scale-110"
-      >
-        <FaWhatsapp size={28} />
-      </a>
     </footer>
   );
 }
