@@ -1,58 +1,104 @@
 "use client";
 
 import Image from "next/image";
-import { FaWhatsapp } from "react-icons/fa";
-
+import {
+  FaWhatsapp,
+  FaFacebook,
+  FaYoutube,
+  FaGooglePlus,
+} from "react-icons/fa";
 export default function Footer() {
   return (
     <footer
-      className="footer relative text-white bg-[#01451E]/85 bg-blend-overlay bg-cover bg-center h-[40vh]"
+      className="footer relative flex justify-center items-center text-white bg-[#01451E]/85 bg-blend-overlay bg-cover bg-center h-[40vh]"
       style={{
         backgroundImage: "url('/footer.png')",
         backgroundPosition: "center 50%",
       }}
     >
-      <div className="absolute inset-0 bg-[#01451E]/30 z-0" />
-      <div className=" flex justify-around items-center">
-        <div className="">
-          <Image src="/logo.png" alt="Logo" width={120} height={40} />
-          <p className=" mt-4 text-white !text-white leading-relaxed ">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-[#01451E]/30 z-0 pointer-events-none" />
+
+      {/* Footer Content */}
+      <div className="relative z-10 flex justify-around items-center w-full max-w-6xl px-10 text-white">
+        {/* Left */}
+        <div className="w-1/4">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={120}
+            height={40}
+            className="object-contain"
+          />
+          <p className="mt-4 leading-relaxed text-white text-sm">
             Pioneering sustainable and innovative real estate development in
             Bangladesh. We build communities, not just structures.
           </p>
         </div>
+
         {/* Middle */}
-        <div className="">
-          <h3 className="text-lg font-semibold mb-3 text-white !text-white">
-            Quick Links
-          </h3>
-          <ul className="list-disc list-inside text-sm text-white !text-white space-y-2">
+        <div className="w-1/4">
+          <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
+          <ul className="list-disc list-inside text-sm space-y-2">
             <li>
-              <a href="#">About Us</a>
+              <a href="#" className="hover:underline">
+                About Us
+              </a>
             </li>
             <li>
-              <a href="#">Our Projects</a>
+              <a href="#" className="hover:underline">
+                Our Projects
+              </a>
             </li>
             <li>
-              <a href="#">Careers</a>
+              <a href="#" className="hover:underline">
+                Careers
+              </a>
             </li>
             <li>
-              <a href="#">Contact</a>
+              <a href="#" className="hover:underline">
+                Contact
+              </a>
             </li>
           </ul>
         </div>
+
         {/* Right */}
-        <div className="">
-          <h3 className="text-lg font-semibold mb-3 text-white !text-white">
-            Contact Us
-          </h3>
-          <p className="text-white !text-white text-sm">
+        <div className="w-1/4">
+          <h3 className="text-xl font-semibold mb-4 mt-[30px]">Contact Us</h3>
+          <p className="text-base mb-3">
             <span className="font-medium">Head Office:</span> Jalshiri Abashon
           </p>
-          <p className="text-white !text-white text-sm mt-2">+880 17xxxxxxx</p>
-          <p className="text-white !text-white text-sm">
-            eco-havenbd@gmail.com
-          </p>
+          <p className="text-base mb-3">+880 17xxxxxxx</p>
+          <p className="text-base mb-6">eco-havenbd@gmail.com</p>
+
+          {/* Follow Us Section */}
+          <div className="mt-4">
+            <h3 className="text-xl font-semibold my-[10px]">Follow Us</h3>
+            <div className="flex space-x-[10px]">
+              <a
+                href="#"
+                className="text-white hover:text-blue-400 transition-colors duration-200"
+                aria-label="Facebook"
+              >
+                <FaFacebook size={28} />
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-red-500 transition-colors duration-200"
+                aria-label="YouTube"
+              >
+                <FaYoutube size={28} />
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-red-400 transition-colors duration-200"
+                aria-label="Google Plus"
+              >
+                <FaGooglePlus size={28} />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
