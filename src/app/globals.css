@@ -82,7 +82,9 @@ a {
   height: auto;
   display: block;
 }
-
+.footer * {
+  color: #fff !important;
+}
 /* Responsive improvements */
 @media (max-width: 640px) {
   .ant-form-item-label {
