@@ -6,6 +6,8 @@ import "./globals.css";
 import PageLoader from "@/components/common/PageLoader";
 import Footer from "@/components/Layout/Footer";
 import Partners from "@/components/Landing/Partners";
+import StatsSection from "@/components/Landing/Stats";
+import YouTubeSection from "@/components/Landing/Video";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -24,6 +26,8 @@ export default function RootLayout({ children }) {
             <Header />
             <PageLoader />
             {children}
+            <YouTubeSection />
+            <StatsSection />
             <Partners />
             <Footer />
           </Layout>

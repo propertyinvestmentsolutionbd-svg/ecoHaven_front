@@ -1,0 +1,131 @@
+.header {
+  width: 100%;
+  background: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 70px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo img {
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav a {
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav a:hover {
+  color: #01451e;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.loginBtn {
+  color: black;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.loginBtn:hover {
+  color: #01451e;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  font-size: 20px;
+  cursor: pointer;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.searchIcon:hover {
+  color: #01451e;
+}
+
+.searchInput {
+  width: 180px;
+  margin-right: 8px;
+  transition: width 0.3s ease;
+}
+
+/* Hide menu button on desktop */
+.menuBtn {
+  display: none;
+  color: black;
+  font-size: 20px;
+}
+
+/* Drawer Styling */
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.closeIcon {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.drawerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.drawerContent a {
+  color: black;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.drawerContent a:hover {
+  color: #01451e;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 992px) {
+  .nav {
+    display: none;
+  }
+
+  .menuBtn {
+    display: inline-flex;
+  }
+
+  .header {
+    padding: 0 1rem;
+  }
+
+  .searchInput {
+    width: 140px;
+  }
+}

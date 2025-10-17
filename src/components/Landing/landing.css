@@ -1,0 +1,367 @@
+.stats-section {
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.stats-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  margin-bottom: 60px;
+}
+
+.stat-card {
+  padding: 30px 20px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+  font-size: 48px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1;
+  margin-bottom: 8px;
+  font-family: 'Georgia', serif;
+}
+
+.stat-label {
+  font-size: 18px;
+  font-weight: 400;
+  color: #666666;
+  margin-bottom: 4px;
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.stat-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Company Name */
+.company-name {
+  font-size: 32px;
+  font-weight: 300;
+  color: #000000;
+  letter-spacing: 1px;
+  font-family: 'Georgia', serif;
+  text-transform: uppercase;
+}
+
+/* Full Width Map */
+.full-width-map {
+  width: 100%;
+  margin-top: 0;
+  position: relative;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+}
+
+.full-width-map iframe {
+  display: block;
+}
+
+/* Map Overlay */
+.map-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.map-overlay:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pin-icon {
+  font-size: 18px;
+  color: #ff4444;
+  animation: pulse 2s infinite;
+}
+
+.overlay-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Pulsing animation for pin icon */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats-container {
+    padding: 60px 16px;
+  }
+
+  .stats-grid {
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    padding: 24px 16px;
+  }
+
+  .stat-number {
+    font-size: 36px;
+  }
+
+  .stat-label {
+    font-size: 16px;
+  }
+
+  .stat-title {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  .company-name {
+    font-size: 28px;
+  }
+
+  .full-width-map iframe {
+    height: 400px;
+  }
+
+  .map-overlay {
+    top: 15px;
+    right: 15px;
+    padding: 10px 16px;
+  }
+
+  .overlay-text {
+    font-size: 13px;
+  }
+
+  .pin-icon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-container {
+    padding: 40px 12px;
+  }
+
+  .stat-number {
+    font-size: 32px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .company-name {
+    font-size: 24px;
+  }
+
+  .full-width-map iframe {
+    height: 300px;
+  }
+
+  .map-overlay {
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+  }
+
+  .overlay-content {
+    gap: 8px;
+  }
+
+  .overlay-text {
+    font-size: 12px;
+  }
+
+  .pin-icon {
+    font-size: 14px;
+  }
+}
+
+/* Grid spacing adjustments */
+.stats-grid .ant-col {
+  display: flex;
+}
+
+.stat-card {
+  width: 100%;
+}
+/* video------------------ */
+.youtube-section {
+  width: 100%;
+  background: #000;
+  padding: 80px 0;
+}
+
+.youtube-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Video Wrapper for Responsive Aspect Ratio */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  background: #000;
+}
+
+.youtube-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
+/* Video Information */
+.video-info {
+  text-align: center;
+  margin-top: 30px;
+  color: #fff;
+}
+
+.video-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.video-description {
+  font-size: 18px;
+  font-weight: 400;
+  color: #ccc;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Alternative: Full bleed version (edge to edge) */
+.youtube-section.full-bleed {
+  padding: 0;
+}
+
+.youtube-section.full-bleed .youtube-container {
+  max-width: none;
+  padding: 0;
+}
+
+.youtube-section.full-bleed .video-wrapper {
+  border-radius: 0;
+}
+
+.youtube-section.full-bleed .youtube-iframe {
+  border-radius: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .youtube-section {
+    padding: 60px 0;
+  }
+  
+  .youtube-container {
+    padding: 0 16px;
+  }
+  
+  .video-info {
+    margin-top: 24px;
+  }
+  
+  .video-title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  
+  .video-description {
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .youtube-section {
+    padding: 40px 0;
+  }
+  
+  .youtube-container {
+    padding: 0 12px;
+  }
+  
+  .video-title {
+    font-size: 22px;
+  }
+  
+  .video-description {
+    font-size: 14px;
+  }
+}
+
+/* Optional: Hover effects */
+.video-wrapper {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
