@@ -5,6 +5,7 @@ import { Layout } from "antd";
 import "./globals.css";
 import PageLoader from "@/components/common/PageLoader";
 import Footer from "@/components/Layout/Footer";
+import Partners from "@/components/Landing/Partners";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
             <Header />
             <PageLoader />
             {children}
+            <Partners />
             <Footer />
           </Layout>
         </StyledComponentsRegistry>
