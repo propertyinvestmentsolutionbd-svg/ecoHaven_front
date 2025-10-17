@@ -7,57 +7,61 @@ import {
   FaYoutube,
   FaGooglePlus,
 } from "react-icons/fa";
+import "./footer.css"; // We'll create this CSS file
+
 export default function Footer() {
   return (
-    <footer
-      className="footer relative  text-white bg-[#01451E]/85 bg-blend-overlay bg-cover bg-center h-[40vh]"
-      style={{
-        backgroundImage: "url('/footer.png')",
-        backgroundPosition: "center 50%",
-      }}
-    >
+    <footer className="footer-vanilla">
+      {/* Background */}
+      <div
+        className="footer-background"
+        style={{
+          backgroundImage: "url('/footer.png')",
+        }}
+      />
+
       {/* Overlay */}
-      <div className="absolute inset-0 bg-[#01451E]/30 z-0 pointer-events-none" />
+      <div className="footer-overlay" />
 
       {/* Footer Content */}
-      <div className="flex justify-center items-center">
-        <div className="relative z-10 flex justify-around items-center w-full max-w-6xl px-10 text-white">
+      <div className="footer-content-container">
+        <div className="footer-content">
           {/* Left */}
-          <div className="w-1/4">
+          <div className="footer-left">
             <Image
               src="/logo.png"
               alt="Logo"
               width={100}
               height={100}
-              className="object-contain"
+              className="footer-logo"
             />
-            <p className="mt-4 leading-relaxed text-white text-[18px]">
+            <p className="footer-mission">
               Pioneering sustainable and innovative real estate development in
               Bangladesh. We build communities, not just structures.
             </p>
           </div>
 
           {/* Middle */}
-          <div className="w-1/4">
-            <h3 className="text-[18px] font-semibold my-[18px]">Quick Links</h3>
-            <ul className="ml-[10px] list-disc list-inside  ">
-              <li className="mt-[20px]">
-                <a href="#" className="hover:underline text-[18px]">
+          <div className="footer-middle">
+            <h3 className="footer-heading">Quick Links</h3>
+            <ul className="footer-links">
+              <li>
+                <a href="#" className="footer-link">
                   About Us
                 </a>
               </li>
-              <li className="mt-[10px]">
-                <a href="#" className="hover:underline text-[18px]">
+              <li>
+                <a href="#" className="footer-link">
                   Our Projects
                 </a>
               </li>
-              <li className="mt-[10px]">
-                <a href="#" className="hover:underline text-[18px]">
+              <li>
+                <a href="#" className="footer-link">
                   Careers
                 </a>
               </li>
-              <li className="mt-[10px]">
-                <a href="#" className="hover:underline text-[18px]">
+              <li>
+                <a href="#" className="footer-link">
                   Contact
                 </a>
               </li>
@@ -65,42 +69,26 @@ export default function Footer() {
           </div>
 
           {/* Right */}
-          <div className="w-1/4">
-            <h3 className="text-[18px] font-semibold mb-4 mt-[30px] mb-[10px]">
-              Contact Us
-            </h3>
-            <p className="text-base my-[10px]">
-              <span className="font-medium text-[18px]">Head Office:</span>{" "}
-              Jalshiri Abashon
+          <div className="footer-right">
+            <h3 className="footer-heading">Contact Us</h3>
+            <p className="footer-contact">
+              <span className="contact-label">Head Office:</span> Jalshiri
+              Abashon
             </p>
-            <p className="text-base my-[10px] text-[18px]">+880 17xxxxxxx</p>
-            <p className="text-base my-[10px] text-[18px]">
-              eco-havenbd@gmail.com
-            </p>
+            <p className="footer-contact">+880 17xxxxxxx</p>
+            <p className="footer-contact">eco-havenbd@gmail.com</p>
 
             {/* Follow Us Section */}
-            <div className="mt-[10px]">
-              <h3 className="text-[18px] font-semibold my-[10px]">Follow Us</h3>
-              <div className="flex space-x-[12px]">
-                <a
-                  href="#"
-                  className="text-white hover:text-blue-400 transition-colors duration-200"
-                  aria-label="Facebook"
-                >
+            <div className="footer-social">
+              <h3 className="footer-heading">Follow Us</h3>
+              <div className="social-icons">
+                <a href="#" className="social-icon" aria-label="Facebook">
                   <FaFacebook size={28} />
                 </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-red-500 transition-colors duration-200"
-                  aria-label="YouTube"
-                >
+                <a href="#" className="social-icon" aria-label="YouTube">
                   <FaYoutube size={28} />
                 </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-red-400 transition-colors duration-200"
-                  aria-label="Google Plus"
-                >
+                <a href="#" className="social-icon" aria-label="Google Plus">
                   <FaGooglePlus size={28} />
                 </a>
               </div>
@@ -110,32 +98,20 @@ export default function Footer() {
       </div>
 
       {/* Footer Bottom */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          width: "100%",
-          textAlign: "center",
-          zIndex: 10,
-        }}
-      >
-        <hr
-          style={{
-            borderTop: "1px solid rgba(255, 255, 255, 0.4)",
-            margin: 0,
-          }}
-        />
-        <p
-          style={{
-            color: "white",
-            fontSize: "16px",
-            margin: "8px 0",
-          }}
-        >
-          All Rights Reserved By ©Eco-Haven
-        </p>
+      <div className="footer-bottom" style={{ marginTop: "20px" }}>
+        <hr className="footer-divider" />
+        <p className="footer-copyright">All Rights Reserved By ©Eco-Haven</p>
       </div>
+
+      {/* WhatsApp Floating */}
+      <a
+        href="https://wa.me/88017xxxxxxx"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-float"
+      >
+        <FaWhatsapp size={28} />
+      </a>
     </footer>
   );
 }
