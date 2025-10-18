@@ -8,6 +8,7 @@ import Footer from "@/components/Layout/Footer";
 import Partners from "@/components/Landing/Partners";
 import StatsSection from "@/components/Landing/Stats";
 import YouTubeSection from "@/components/Landing/Video";
+import ImagePopup from "@/components/Landing/ImagePopup";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <Layout className="min-h-screen">
             <Header />
             <PageLoader />
+            <ImagePopup />
             {children}
             <YouTubeSection />
             <StatsSection />

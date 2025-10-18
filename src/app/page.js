@@ -16,7 +16,7 @@ export default function Employees() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <Card>
+        {/* <Card>
           <Space direction="vertical" size="large" className="w-full">
             <div className="text-center">
               <Title level={1} className="!text-2xl sm:!text-3xl">
@@ -55,7 +55,7 @@ export default function Employees() {
               </Button>
             </div>
           </Space>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
