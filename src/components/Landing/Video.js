@@ -18,7 +18,7 @@ const YouTubeSection = () => {
         <div className="video-info">
           <h3 className="video-title">Our Creative Process</h3>
           <p className="video-description">
-            Watch how we bring digital ideas to life at Digitmark Creative
+            Watch how we bring digital ideas to life at Eco Haven
           </p>
         </div>
       </div>
