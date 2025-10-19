@@ -10,6 +10,7 @@ import StatsSection from "@/components/Landing/Stats";
 import YouTubeSection from "@/components/Landing/Video";
 import ImagePopup from "@/components/Landing/ImagePopup";
 import Hero from "@/components/Landing/Hero";
+import ReviewSection from "@/components/Landing/Review";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
             <Header />
             <PageLoader />
             <Hero />
+            <ReviewSection />
             <ImagePopup />
             {children}
             <YouTubeSection />
