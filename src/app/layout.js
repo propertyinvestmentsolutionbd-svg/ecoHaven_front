@@ -11,6 +11,7 @@ import YouTubeSection from "@/components/Landing/Video";
 import ImagePopup from "@/components/Landing/ImagePopup";
 import Hero from "@/components/Landing/Hero";
 import ReviewSection from "@/components/Landing/Review";
+import ServicesSection from "@/components/Landing/Service";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -28,13 +29,10 @@ export default function RootLayout({ children }) {
           <Layout className="min-h-screen">
             <Header />
             <PageLoader />
-            <Hero />
-            <ReviewSection />
             <ImagePopup />
+
             {children}
-            <YouTubeSection />
-            <StatsSection />
-            <Partners />
+
             <Footer />
           </Layout>
         </StyledComponentsRegistry>

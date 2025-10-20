@@ -5,6 +5,7 @@ import { Input, Drawer } from "antd";
 import { SearchOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import "./Header.css";
+import Link from "next/link";
 
 export default function Header() {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -22,17 +23,17 @@ export default function Header() {
 
       {/* Center - Navigation (Desktop) */}
       <nav className={"nav"}>
-        <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Projects</a>
-        <a href="#">Contact</a>
+        <Link href="/">Home</Link>
+        <Link href="#">About</Link>
+        <Link href="#">Projects</Link>
+        <Link href="#">Contact</Link>
       </nav>
 
       {/* Right - Login and Search */}
       <div className={"rightSection"}>
-        <a href="#" className={"loginBtn"}>
+        <Link href="/login" className={"loginBtn"}>
           Login
-        </a>
+        </Link>
         <div className={"searchWrapper"}>
           {searchVisible && (
             <Input
@@ -68,21 +69,21 @@ export default function Header() {
         className={"drawer"}
       >
         <div className={"drawerContent"}>
-          <a href="#" onClick={closeDrawer}>
+          <Link href="/" onClick={closeDrawer}>
             Home
-          </a>
-          <a href="#" onClick={closeDrawer}>
+          </Link>
+          <Link href="#" onClick={closeDrawer}>
             About
-          </a>
-          <a href="#" onClick={closeDrawer}>
+          </Link>
+          <Link href="#" onClick={closeDrawer}>
             Projects
-          </a>
-          <a href="#" onClick={closeDrawer}>
+          </Link>
+          <Link href="#" onClick={closeDrawer}>
             Contact
-          </a>
-          <a href="#" onClick={closeDrawer}>
+          </Link>
+          <Link href="/login" onClick={closeDrawer}>
             Login
-          </a>
+          </Link>
         </div>
       </Drawer>
     </header>
