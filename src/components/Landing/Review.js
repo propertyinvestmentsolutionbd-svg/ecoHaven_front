@@ -15,26 +15,26 @@ export default function ReviewSection() {
     fetch("/api/reviews")
       .then((res) => res.json())
       .then((data) => {
-        // setReviews([
-        //   {
-        //     id: 1,
-        //     name: "Dr. Abdullah Al Jahangir",
-        //     title: "Respected Landowner",
-        //     review:
-        //       "When we decided to partner with a developer, the initial step of trusting them with our land felt like the biggest hurdle. Eco Haven quickly put those fears to rest.",
-        //     mediaType: "image",
-        //     media: "/review1.jpg",
-        //   },
-        //   {
-        //     id: 2,
-        //     name: "Mr. Hasan Mahmud",
-        //     title: "Apartment Owner",
-        //     review:
-        //       "The entire journey with Eco Haven was smooth. They delivered more than what was promised.",
-        //     mediaType: "video",
-        //     media: "/review2.mp4",
-        //   },
-        // ]);
+        setReviews([
+          {
+            id: 1,
+            name: "Dr. Abdullah Al Jahangir",
+            title: "Respected Landowner",
+            review:
+              "When we decided to partner with a developer, the initial step of trusting them with our land felt like the biggest hurdle. Eco Haven quickly put those fears to rest.",
+            mediaType: "image",
+            media: "/review1.jpg",
+          },
+          {
+            id: 2,
+            name: "Mr. Hasan Mahmud",
+            title: "Apartment Owner",
+            review:
+              "The entire journey with Eco Haven was smooth. They delivered more than what was promised.",
+            mediaType: "video",
+            media: "/review2.mp4",
+          },
+        ]);
         setLoading(false);
       })
       .catch(() => {
