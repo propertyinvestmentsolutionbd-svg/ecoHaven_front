@@ -34,31 +34,6 @@
   color: #fff;
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: -25px;
-  left: 50%;
-
-  transform: translateX(-50%);
-  background: #01451e;
-  border: 2px solid #01451e;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5; /* <-- ensures it's above the image */
-}
-
-.triangle {
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 14px solid #ddd;
-}
-
 /* Responsive fine-tuning */
 @media (max-width: 768px) {
   .about-title {
