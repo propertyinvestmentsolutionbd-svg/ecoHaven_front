@@ -1,10 +1,11 @@
 import Image from "next/image";
 import React from "react";
 import "./about.css";
+import CommonPage from "@/components/common/CommonPage";
 
 export default function About() {
   return (
-    <div>
+    <CommonPage>
       <section className="about-section">
         <div className="about-image-container">
           <Image
@@ -39,8 +40,8 @@ export default function About() {
               <Image
                 src="/mission1.png"
                 alt="Mission"
-                width={400}
-                height={260}
+                width={416}
+                height={353}
                 className="image"
               />
             </div>
@@ -61,8 +62,8 @@ export default function About() {
               <Image
                 src="/mission2.png"
                 alt="Vision"
-                width={400}
-                height={260}
+                width={416}
+                height={353}
                 className="image"
               />
             </div>
@@ -83,8 +84,8 @@ export default function About() {
               <Image
                 src="/mission3.png"
                 alt="Values"
-                width={400}
-                height={260}
+                width={416}
+                height={353}
                 className="image"
               />
             </div>
@@ -101,6 +102,6 @@ export default function About() {
           </div>
         </div>
       </section>
-    </div>
+    </CommonPage>
   );
 }

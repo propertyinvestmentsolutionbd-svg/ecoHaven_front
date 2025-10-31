@@ -83,27 +83,9 @@ a {
     width: 100%;
   }
 }
-/* //////////////////////////////////// */
-.partner-background {
-  background-color: #fff;
-  background-image: url("/partnerB.png");
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: auto 40%;
-  height: 50vh;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  color: #01451e;
-  font-weight: 600;
-  position: relative;
-}
-
+/* /// partner-------------------------- */
 .partners-title {
-  margin-top: -90px;
+  margin-top: 90px;
   text-align: center;
   font-size: clamp(1.5rem, 4vw, 2.5rem);
 }
@@ -111,33 +93,27 @@ a {
 .partners-image-container {
   margin: 50px 0 0px;
   width: 100%;
-  max-width: 500px;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .partners-image {
   width: 100%;
   height: auto;
-  max-width: 500px;
 }
 
 /* Tablet */
 @media (max-width: 768px) {
-  .partner-background {
-    height: 40vh;
-    min-height: 300px;
-    background-size: auto 40%;
-  }
+  
   
   .partners-title {
-    margin-top: -60px;
+    margin-top: 60px;
     font-size: 1.8rem;
   }
   
   .partners-image-container {
     margin: 30px 20px;
-    max-width: 400px;
   }
 }
 
@@ -150,25 +126,45 @@ a {
   }
   
   .partners-title {
-    margin-top: -40px;
+    margin-top: 40px;
     font-size: 1rem;
     margin-bottom: 10px;
   }
   
   .partners-image-container {
     margin: 20px 15px;
-    max-width: 300px;
   }
 }
 
-/* Large screens */
-@media (min-width: 1200px) {
-  .partner-background {
-    height: 60vh;
-    min-height: 500px;
-  }
+/* global page */
+.commonPage-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.commonPage-content {
+  position: relative;
+  z-index: 2;
+  margin-bottom:12rem;
+}
+
+/* Background image container */
+.commonPage-bg-image {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  height: 40%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.commonPage-bg-image .bg-img {
+  object-fit: contain;
   
-  .partners-image-container {
-    max-width: 600px;
-  }
+  object-position: bottom right;
+  opacity: 0.5; /* Subtle visibility */
 }
