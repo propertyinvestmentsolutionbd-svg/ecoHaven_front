@@ -24,7 +24,7 @@ export default function Header() {
       {/* Center - Navigation (Desktop) */}
       <nav className={"nav"}>
         <Link href="/">Home</Link>
-        <Link href="#">About</Link>
+        <Link href="/about">About</Link>
         <Link href="#">Projects</Link>
         <Link href="#">Contact</Link>
       </nav>
@@ -72,7 +72,7 @@ export default function Header() {
           <Link href="/" onClick={closeDrawer}>
             Home
           </Link>
-          <Link href="#" onClick={closeDrawer}>
+          <Link href="/about" onClick={closeDrawer}>
             About
           </Link>
           <Link href="#" onClick={closeDrawer}>
