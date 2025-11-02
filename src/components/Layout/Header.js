@@ -26,7 +26,7 @@ export default function Header() {
         <Link href="/">Home</Link>
         <Link href="/about">About</Link>
         <Link href="#">Projects</Link>
-        <Link href="#">Contact</Link>
+        <Link href="/contact">Contact</Link>
       </nav>
 
       {/* Right - Login and Search */}
@@ -78,7 +78,7 @@ export default function Header() {
           <Link href="#" onClick={closeDrawer}>
             Projects
           </Link>
-          <Link href="#" onClick={closeDrawer}>
+          <Link href="/contact" onClick={closeDrawer}>
             Contact
           </Link>
           <Link href="/login" onClick={closeDrawer}>

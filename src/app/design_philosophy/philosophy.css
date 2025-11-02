@@ -29,20 +29,18 @@
   margin-right: auto;
 }
 
+
 @media (max-width: 768px) {
-  .philosophy-page {
+ .philosophy-container{
+          height: 70vh
+}
+.philosophy-page {
     padding: 24px 0;
   }
   
   .feature-cards-section {
     margin-bottom: 48px;
   }
-}
-
-@media (max-width: 768px) {
- .philosophy-container{
-          height: 70vh
-}
 }
 @media (max-width: 900px) {
  .philosophy-container{
