@@ -4,6 +4,7 @@
   height: 90vh;
   min-height: 400px;
   overflow: visible;
+            object-Fit: cover,
 
 }
 .contact-form-container {
@@ -15,6 +16,7 @@
   background: #f5f5f5;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .contact-info-section {
@@ -137,5 +139,12 @@
 @media (max-width: 900px) {
  .contact-image-container{
           height: 70vh
+}
+}
+@media (max-width: 480px) {
+ .contact-image-container{
+            object-Fit: "fill",
+
+
 }
 }

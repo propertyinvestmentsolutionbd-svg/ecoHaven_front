@@ -31,10 +31,10 @@ export default function Contact() {
           //   width={100}
           //   height={100}
           priority
-          //   className="about-image"
-          style={{
-            objectFit: "cover",
-          }}
+          // className="about-image"
+          // style={{
+          //   objectFit: "cover",
+          // }}
         />
         <div className="about-overlay"></div>
         <h1 className="about-title">Contact Us</h1>

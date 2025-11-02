@@ -1,0 +1,258 @@
+.management-image-container{
+position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 400px;
+  overflow: visible;
+object-Fit: cover,
+
+}
+.team-section {
+  padding: 48px 0;
+  margin: 2rem;
+}
+
+/* Featured Employee */
+.featured-employee {
+  margin-bottom: 64px;
+}
+
+.featured-image-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.featured-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  padding: 10px;
+  border: 1px;
+  border-radius: 15px;
+}
+
+.featured-content {
+  padding: 0 16px;
+}
+
+.featured-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.featured-role {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2ecc71;
+  margin-bottom: 24px;
+}
+
+.featured-description {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #666;
+}
+
+/* Employee Carousel */
+.employee-carousel-section {
+  position: relative;
+  padding: 0 60px;
+}
+
+.employee-slide {
+  padding: 0 12px;
+}
+
+.employee-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.employee-image-wrapper {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.employee-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.employee-card:hover .employee-image {
+  transform: scale(1.05);
+}
+
+.employee-info {
+  padding: 20px;
+}
+
+.employee-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.employee-role {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2ecc71;
+  margin-bottom: 12px;
+}
+
+.employee-preview {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Carousel Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.carousel-arrow:hover {
+  background: #2ecc71;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.carousel-arrow-left {
+  left: 0;
+}
+
+.carousel-arrow-right {
+  right: 0;
+}
+
+/* Modal */
+.employee-modal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modal-content {
+  text-align: center;
+  padding: 24px;
+}
+
+.modal-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 24px;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.modal-role {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2ecc71;
+  margin-bottom: 20px;
+}
+
+.modal-description {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #666;
+  text-align: left;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .employee-carousel-section {
+    padding: 0 48px;
+  }
+
+  .featured-name {
+    font-size: 28px;
+  }
+
+  .featured-role {
+    font-size: 18px;
+  }
+
+  .featured-description {
+    font-size: 14px;
+  }
+
+  .featured-content {
+    padding: 0;
+  }
+
+  .carousel-arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .employee-image-wrapper {
+    height: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-carousel-section {
+    padding: 0 44px;
+  }
+
+  .team-section {
+    padding: 32px 0;
+  }
+
+  .featured-employee {
+    margin-bottom: 48px;
+  }
+
+  .modal-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .modal-name {
+    font-size: 24px;
+  }
+
+  .modal-role {
+    font-size: 16px;
+  }
+}
