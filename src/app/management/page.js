@@ -222,9 +222,6 @@ export default function Management() {
                   height={2000}
                   priority
                   className="modal-image"
-                  // style={{
-                  //   objectFit: "cover",
-                  // }}
                 />
 
                 <h2 className="modal-name">{selectedEmployee.name}</h2>
