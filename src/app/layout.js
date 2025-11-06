@@ -5,13 +5,9 @@ import { Layout } from "antd";
 import "./globals.css";
 import PageLoader from "@/components/common/PageLoader";
 import Footer from "@/components/Layout/Footer";
-import Partners from "@/components/Landing/Partners";
-import StatsSection from "@/components/Landing/Stats";
-import YouTubeSection from "@/components/Landing/Video";
+
 import ImagePopup from "@/components/Landing/ImagePopup";
-import Hero from "@/components/Landing/Hero";
-import ReviewSection from "@/components/Landing/Review";
-import ServicesSection from "@/components/Landing/Service";
+import { ConfigProvider } from "antd";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -25,17 +21,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StyledComponentsRegistry>
-          <Layout className="min-h-screen">
-            <Header />
-            <PageLoader />
-            <ImagePopup />
+        <ConfigProvider theme={{ hashed: false }}>
+          <StyledComponentsRegistry>
+            <Layout className="min-h-screen">
+              <Header />
+              <PageLoader />
+              <ImagePopup />
 
-            {children}
+              {children}
 
-            <Footer />
-          </Layout>
-        </StyledComponentsRegistry>
+              <Footer />
+            </Layout>
+          </StyledComponentsRegistry>
+        </ConfigProvider>
       </body>
     </html>
   );
