@@ -49,13 +49,7 @@ const ImagePopup = () => {
 
   // Manage body scroll
   useEffect(() => {
-    console.log(
-      window.location.pathname.includes("dashboard"),
-      !window.location.pathname.includes("dashboard"),
-      window.location.pathname,
-      isVisible
-    );
-    if (!window.location.pathname.includes("dashboard") && isVisible) {
+    if (isVisible) {
       document.body.classList.add("popup-open");
     } else {
       document.body.classList.remove("popup-open");
@@ -66,9 +60,9 @@ const ImagePopup = () => {
     };
   }, [isVisible]);
 
-  if (!isVisible) return null;
+  if (!isVisible || window.location.pathname.includes("dashboard")) return null;
 
-  return !window.location.pathname.includes("dashboard") ? (
+  return (
     <div className="popup-overlay" onClick={handleOverlayClick}>
       <div className="popup-content">
         {/* Close Button */}
@@ -102,8 +96,6 @@ const ImagePopup = () => {
         </div>
       </div>
     </div>
-  ) : (
-    <></>
   );
 };
 

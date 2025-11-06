@@ -1,13 +1,14 @@
 import { Inter } from "next/font/google";
-import StyledComponentsRegistry from "../lib/registry";
-import Header from "../components/Layout/Header";
+import Header from "../../components/Layout/Header";
 import { Layout } from "antd";
-import "./globals.css";
+import "../globals.css";
 import PageLoader from "@/components/common/PageLoader";
 import Footer from "@/components/Layout/Footer";
 
 import ImagePopup from "@/components/Landing/ImagePopup";
 import { ConfigProvider } from "antd";
+import "../../components/Landing/landing.css";
+import StyledComponentsRegistry from "@/lib/registry";
 
 const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
@@ -17,7 +18,7 @@ export const metadata = {
   description: "Employee registration system",
 };
 
-export default function RootLayout({ children }) {
+export default function GeneralLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>

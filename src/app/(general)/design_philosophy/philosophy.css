@@ -10,6 +10,7 @@
   min-height: 50vh;
   background: #ffffff;
   padding: 48px 0;
+  margin: 0 25rem;
 }
 
 .philosophy-content {
@@ -33,6 +34,7 @@
 @media (max-width: 768px) {
  .philosophy-container{
           height: 70vh
+
 }
 .philosophy-page {
     padding: 24px 0;
@@ -46,4 +48,7 @@
  .philosophy-container{
           height: 70vh
 }
+.philosophy-page {
+    margin: 0;
+  }
 }

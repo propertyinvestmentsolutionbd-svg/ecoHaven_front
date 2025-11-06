@@ -2,7 +2,7 @@
 
 import { Row, Col } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
-import "./landing.css";
+// import "./landing.css";
 
 const StatsSection = () => {
   const statsData = [

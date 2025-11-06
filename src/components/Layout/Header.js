@@ -18,7 +18,7 @@ export default function Header() {
     <header className={"header"}>
       {/* Left - Logo */}
       <div className={"logo"}>
-        <Image src="/logo.png" alt="Logo" width={90} height={45} />
+        <Image src="/logoNew.jpeg" alt="Logo" width={90} height={45} />
       </div>
 
       {/* Center - Navigation (Desktop) */}
@@ -27,6 +27,8 @@ export default function Header() {
         <Link href="/about">About</Link>
         <Link href="/projects">Projects</Link>
         <Link href="/contact">Contact</Link>
+        <Link href="/management">Management</Link>
+        <Link href="/design_philosophy">Design Philosophy</Link>
       </nav>
 
       {/* Right - Login and Search */}
@@ -81,6 +83,8 @@ export default function Header() {
           <Link href="/contact" onClick={closeDrawer}>
             Contact
           </Link>
+          <Link href="/management">Management</Link>
+          <Link href="/design_philosophy">Design Philosophy</Link>
           <Link href="/login" onClick={closeDrawer}>
             Login
           </Link>

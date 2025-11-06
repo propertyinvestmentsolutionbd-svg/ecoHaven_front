@@ -24,7 +24,7 @@ export default function PageLoader() {
     <div className={`loader-overlay ${visible ? "show" : "hide"}`}>
       <img
         key={pathname}
-        src="/loading.gif"
+        src="/loadingNew.gif"
         alt="Loading..."
         className="loader-gif"
       />

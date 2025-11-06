@@ -2,7 +2,6 @@
 
 import { Typography } from "antd";
 
-import { useRouter } from "next/navigation";
 import Hero from "@/components/Landing/Hero";
 import ReviewSection from "@/components/Landing/Review";
 import ServicesSection from "@/components/Landing/Service";
