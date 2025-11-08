@@ -29,6 +29,7 @@ export default function Header() {
         <Link href="/contact">Contact</Link>
         <Link href="/management">Management</Link>
         <Link href="/design_philosophy">Design Philosophy</Link>
+        <Link href="/career">Career</Link>
       </nav>
 
       {/* Right - Login and Search */}
@@ -85,6 +86,8 @@ export default function Header() {
           </Link>
           <Link href="/management">Management</Link>
           <Link href="/design_philosophy">Design Philosophy</Link>
+          <Link href="/career">Career</Link>
+
           <Link href="/login" onClick={closeDrawer}>
             Login
           </Link>
