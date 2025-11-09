@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Form, Input, Button, Card, Typography, Alert, Divider } from "antd";
 import {
   MailOutlined,
@@ -10,12 +9,16 @@ import {
   UserOutlined,
   SafetyCertificateOutlined,
 } from "@ant-design/icons";
+import "./login.css";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const { Title, Text, Paragraph } = Typography;
 
-export default function LoginPage() {
+const Login = () => {
   const [form] = Form.useForm();
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,23 +30,23 @@ export default function LoginPage() {
       console.log("Login attempt:", values);
 
       // Simulate API call
-      const response = await new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve({
-              success: true,
-              requires2FA: Math.random() > 0.5, // Randomly require 2FA for demo
-              tempToken: "temp-token-123",
-            }),
-          1500
-        )
-      );
+      const response =
+        (await new Promise()) <
+        any >
+        ((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                success: true,
+                requires2FA: Math.random() > 0.5,
+                tempToken: "temp-token-123",
+              }),
+            1500
+          ));
 
       if (response.requires2FA) {
-        // Redirect to 2FA page with temp token
-        router.push(`/login/verify-2fa?tempToken=${response.tempToken}`);
+        router.push(`/verify-2fa?tempToken=${response.tempToken}`);
       } else {
-        // Regular login successful
         router.push("/dashboard");
       }
     } catch (err) {
@@ -53,31 +56,37 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <UserOutlined className="text-2xl text-white" />
-          </div>
-          <Title level={2} className="!mb-2 !text-gray-800">
-            Welcome Back
-          </Title>
-          <Text className="text-gray-600 text-lg">Sign in to your account</Text>
-        </div>
+  const handleGoogleSignIn = () => {
+    console.log("Google Sign In clicked");
+    // Implement Google OAuth logic here
+  };
 
-        <Card
-          className="shadow-xl border-0 rounded-2xl"
-          style={{ padding: "40px" }}
-        >
+  return (
+    <div className="login-container">
+      {/* Left Side - Building Image */}
+      <div className="login-image-section">
+        <Image
+          src={"/loginBg.png"}
+          alt="Modern Architecture"
+          className="login-building-image"
+          fill
+        />
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="login-form-section">
+        <div className="login-form-wrapper">
+          <div className="login-header">
+            <h1 className="login-title">Welcome To EcoHaven</h1>
+          </div>
+
           {error && (
             <Alert
               message={error}
               type="error"
               showIcon
               closable
-              className="mb-6 rounded-lg"
+              className="login-alert"
               onClose={() => setError("")}
             />
           )}
@@ -87,70 +96,85 @@ export default function LoginPage() {
             name="login"
             onFinish={onFinish}
             layout="vertical"
-            size="large"
+            className="login-form"
           >
             <Form.Item
-              label="Email Address"
+              label={<span className="form-label">User Name or Email</span>}
               name="email"
               rules={[
                 { required: true, message: "Please input your email!" },
                 { type: "email", message: "Please enter a valid email!" },
               ]}
-              className="!mb-6"
             >
               <Input
-                placeholder="your.email@company.com"
-                prefix={<MailOutlined className="text-gray-400" />}
-                className="rounded-lg h-12"
+                placeholder="David Roy"
+                prefix={<MailOutlined className="input-icon" />}
+                className="form-input"
               />
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label={<span className="form-label">Password</span>}
               name="password"
               rules={[
                 { required: true, message: "Please input your password!" },
               ]}
-              className="!mb-8"
             >
               <Input.Password
-                placeholder="Enter your password"
-                prefix={<LockOutlined className="text-gray-400" />}
-                className="rounded-lg h-12"
+                placeholder="••••••••••"
+                prefix={<LockOutlined className="input-icon" />}
+                className="form-input"
               />
             </Form.Item>
 
-            <Form.Item className="!mb-0">
+            <div className="forgot-password-wrapper">
+              <a href="#" className="forgot-password-link">
+                Forget Password
+              </a>
+            </div>
+
+            <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={loading}
                 block
-                className="h-12 rounded-lg text-base font-semibold bg-blue-600 hover:bg-blue-700 border-0 shadow-sm"
+                className="signin-button"
               >
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "SIGNING IN..." : "SIGN IN"}
               </Button>
             </Form.Item>
           </Form>
 
-          <Divider className="!my-6">or</Divider>
-
-          <div className="text-center">
-            <Button type="link" className="text-blue-600 font-medium">
-              Forgot your password?
-            </Button>
+          <div className="divider-wrapper">
+            <span className="divider-line"></span>
+            <span className="divider-text">OR</span>
+            <span className="divider-line"></span>
           </div>
-        </Card>
 
-        {/* Security Notice */}
-        <div className="text-center mt-8 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-          <SafetyCertificateOutlined className="text-green-500 text-lg mb-2" />
-          <Paragraph className="!mb-0 text-sm text-gray-600">
-            Your security is our priority. We use advanced encryption and
-            optional two-factor authentication.
-          </Paragraph>
+          {/* <Button
+            block
+            className="google-signin-button"
+            onClick={handleGoogleSignIn}
+          >
+            <GoogleOutlined className="google-icon" />
+            Sign In With Google
+          </Button> */}
+
+          {/* City Skyline */}
+          <div className="city-skyline">
+            <div className="building building-1"></div>
+            <div className="building building-2"></div>
+            <div className="building building-3"></div>
+            <div className="building building-4"></div>
+            <div className="building building-5"></div>
+            <div className="building building-6"></div>
+            <div className="building building-7"></div>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Login;
