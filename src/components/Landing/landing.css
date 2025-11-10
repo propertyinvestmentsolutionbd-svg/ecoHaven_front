@@ -692,8 +692,10 @@ body.popup-open {
 
 
 .hero-item:hover {
-  transform: translateY(-4px) scale(1.03);
-  color: #01451e;
+  transform: translateY(-4px) scale(1.03) !important;
+  /* color: #01451e; */
+  color: white;
+  
 }
 
 .hero-button {
@@ -713,12 +715,12 @@ body.popup-open {
 }
 @keyframes fadeInUp {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    /* opacity: 0; */
+    transform: scale(2) !important;
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    /* opacity: 1; */
+    transform: scale(0) !important;
   }
 }
 

@@ -14,8 +14,8 @@ const { Content } = Layout;
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Employee Registration",
-  description: "Employee registration system",
+  title: "EcoHaven",
+  description: "",
 };
 
 export default function GeneralLayout({ children }) {
