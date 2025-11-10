@@ -2,18 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import { Form, Input, Button, Card, Typography, Alert, Divider } from "antd";
-import {
-  MailOutlined,
-  LockOutlined,
-  UserOutlined,
-  SafetyCertificateOutlined,
-} from "@ant-design/icons";
+import { Form, Input, Button, Card, Alert, Divider } from "antd";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.css";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-const { Title, Text, Paragraph } = Typography;
 
 const Login = () => {
   const [form] = Form.useForm();
@@ -30,22 +22,20 @@ const Login = () => {
       console.log("Login attempt:", values);
 
       // Simulate API call
-      const response =
-        (await new Promise()) <
-        any >
-        ((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                success: true,
-                requires2FA: Math.random() > 0.5,
-                tempToken: "temp-token-123",
-              }),
-            1500
-          ));
+      const response = (await new Promise())((resolve) =>
+        setTimeout(
+          () =>
+            resolve({
+              success: true,
+              requires2FA: Math.random() > 0.5,
+              tempToken: "temp-token-123",
+            }),
+          1500
+        )
+      );
 
       if (response.requires2FA) {
-        router.push(`/verify-2fa?tempToken=${response.tempToken}`);
+        router.push(`/login/verify-2fa?tempToken=${response.tempToken}`);
       } else {
         router.push("/dashboard");
       }
@@ -56,14 +46,9 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    console.log("Google Sign In clicked");
-    // Implement Google OAuth logic here
-  };
-
   return (
     <div className="login-container">
-      {/* Left Side - Building Image */}
+      {/* Left Side - Building Image
       <div className="login-image-section">
         <Image
           src={"/loginBg.png"}
@@ -71,7 +56,7 @@ const Login = () => {
           className="login-building-image"
           fill
         />
-      </div>
+      </div> */}
 
       {/* Right Side - Login Form */}
       <div className="login-form-section">
@@ -146,11 +131,11 @@ const Login = () => {
             </Form.Item>
           </Form>
 
-          <div className="divider-wrapper">
+          {/* <div className="divider-wrapper">
             <span className="divider-line"></span>
             <span className="divider-text">OR</span>
             <span className="divider-line"></span>
-          </div>
+          </div> */}
 
           {/* <Button
             block
