@@ -1,0 +1,237 @@
+.profile-container {
+  /* min-height: 100vh; */
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--secondary) / 0.1) 100%);
+  /* padding: 2rem 1rem; */
+}
+
+.profile-content {
+  /* max-width: 1000px; */
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  /* margin-bottom: 2rem; */
+}
+
+.profile-title {
+  color: hsl(var(--foreground));
+  margin-bottom: 0.5rem !important;
+  font-size: 2rem;
+}
+
+.profile-subtitle {
+  color: hsl(var(--muted-foreground));
+  font-size: 1rem;
+}
+
+.profile-card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid hsl(var(--border));
+  padding: 2rem;
+  background: hsl(var(--card));
+}
+
+/* Avatar Section */
+.profile-avatar-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+  background: hsl(var(--primary));
+  margin-bottom: 1rem;
+}
+
+.profile-name {
+  color: hsl(var(--foreground));
+  margin-bottom: 0.5rem !important;
+  font-size: 1.5rem;
+}
+
+.profile-email-badge {
+  display: inline-block;
+  padding: 0.25rem 1rem;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  border-radius: 1rem;
+  font-size: 0.875rem;
+}
+
+/* View Mode */
+.profile-view-mode {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.profile-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.profile-edit-header h5 {
+  color: hsl(var(--foreground));
+  margin: 0 !important;
+}
+
+.edit-button {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  border-radius: 0.5rem;
+  height: 40px;
+}
+
+.edit-button:hover {
+  background: hsl(var(--primary) / 0.9);
+  border-color: hsl(var(--primary) / 0.9);
+}
+
+.profile-info-grid {
+  margin-top: 1.5rem;
+}
+
+.profile-info-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border) / 0.5);
+  transition: all 0.3s ease;
+}
+
+.profile-info-item:hover {
+  background: hsl(var(--muted) / 0.5);
+  border-color: hsl(var(--border));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profile-info-icon {
+  font-size: 1.25rem;
+  color: hsl(var(--primary));
+  margin-top: 0.25rem;
+}
+
+.profile-info-label {
+  display: block;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.profile-info-value {
+  font-size: 1rem;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
+/* Edit Mode */
+.profile-edit-mode {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.form-icon {
+  color: hsl(var(--muted-foreground));
+}
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.cancel-button {
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+  border-radius: 0.5rem;
+  height: 44px;
+  min-width: 120px;
+}
+
+.cancel-button:hover {
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+}
+
+.save-button {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  border-radius: 0.5rem;
+  height: 44px;
+  min-width: 140px;
+}
+
+.save-button:hover {
+  background: hsl(var(--primary) / 0.9);
+  border-color: hsl(var(--primary) / 0.9);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+  }
+
+  .profile-title {
+    font-size: 1.5rem;
+  }
+
+  .profile-edit-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edit-button {
+    width: 100%;
+  }
+
+  .profile-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-info-item {
+    padding: 0.75rem;
+  }
+
+  .profile-info-icon {
+    font-size: 1rem;
+  }
+
+  .profile-info-value {
+    font-size: 0.875rem;
+  }
+}
