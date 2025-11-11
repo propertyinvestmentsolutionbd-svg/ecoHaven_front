@@ -16,6 +16,8 @@ import {
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { ImProfile } from "react-icons/im";
+
 import "./dashboard/Dashboard.css";
 import StyledComponentsRegistry from "@/lib/registry";
 import { Inter } from "next/font/google";
@@ -41,14 +43,23 @@ export default function DashboardLayout({ children }) {
 
   const menuItems = [
     { key: "/dashboard", icon: <HomeOutlined />, label: "Home" },
-    { key: "/dashboard/profile", icon: <HomeOutlined />, label: "Profile" },
+    { key: "/dashboard/profile", icon: <ImProfile />, label: "Profile" },
+    { key: "/dashboard/account", icon: <HomeOutlined />, label: "Account" },
     {
-      key: "/dashboard/projects",
+      key: "/dashboard/manage_projects",
       icon: <ProjectOutlined />,
       label: "Projects",
     },
-    { key: "/dashboard/gallery", icon: <PictureOutlined />, label: "Gallery" },
-    { key: "/dashboard/contact", icon: <ContactsOutlined />, label: "Contact" },
+    {
+      key: "/dashboard/manage_gallery",
+      icon: <PictureOutlined />,
+      label: "Gallery",
+    },
+    {
+      key: "/dashboard/contacts",
+      icon: <ContactsOutlined />,
+      label: "Contact",
+    },
     {
       key: "/dashboard/accounting",
       icon: <DollarOutlined />,
@@ -64,7 +75,7 @@ export default function DashboardLayout({ children }) {
       icon: <SettingOutlined />,
       label: "Settings",
     },
-    { key: "/dashboard/blogs", icon: <ReadOutlined />, label: "Blogs" },
+    { key: "/dashboard/manage_blogs", icon: <ReadOutlined />, label: "Blogs" },
   ];
 
   const handleMenuClick = ({ key }) => {

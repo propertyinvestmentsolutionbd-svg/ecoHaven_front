@@ -1,0 +1,201 @@
+.manage-blogs-page {
+  padding: 24px;
+  background-color: #f5f5f5;
+  /* min-height: 100vh; */
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.create-btn {
+  background-color: #2d5f3f;
+  border-color: #2d5f3f;
+  height: 40px;
+  padding: 0 24px;
+  font-weight: 500;
+}
+
+.create-btn:hover {
+  background-color: #1f4a2e !important;
+  border-color: #1f4a2e !important;
+}
+
+.table-container {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-container .ant-table-thead > tr > th {
+  background-color: #2d5f3f;
+  color: white;
+  font-weight: 600;
+  border-bottom: none;
+}
+
+.table-container .ant-table-tbody > tr:nth-child(even) {
+  background-color: #e8f5e9;
+}
+
+.table-container .ant-table-tbody > tr:hover > td {
+  background-color: #d4edda !important;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-btn {
+  color: #2d5f3f;
+  padding: 0;
+}
+
+.edit-btn:hover {
+  color: #1f4a2e;
+}
+
+.delete-btn {
+  padding: 0;
+}
+
+.blog-modal .ant-modal-header {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.blog-modal .ant-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.blog-form {
+  margin-top: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-item-half {
+  margin-bottom: 16px;
+}
+
+.blog-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.blog-form .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  color: #ff4d4f;
+}
+
+.blog-form .ant-input,
+.blog-form .ant-input-textarea textarea {
+  border: 2px solid #2d5f3f;
+  border-radius: 4px;
+}
+
+.blog-form .ant-input:focus,
+.blog-form .ant-input-textarea textarea:focus,
+.blog-form .ant-input-focused,
+.blog-form .ant-input-textarea-focused textarea {
+  border-color: #2d5f3f;
+  box-shadow: 0 0 0 2px rgba(45, 95, 63, 0.1);
+}
+
+.blog-form .ant-input::placeholder,
+.blog-form .ant-input-textarea textarea::placeholder {
+  color: #bbb;
+}
+
+.blog-form .ant-upload-list-picture-card-container,
+.blog-form .ant-upload-select-picture-card {
+  width: 104px;
+  height: 104px;
+}
+
+.form-actions {
+  margin-top: 24px;
+  margin-bottom: 0;
+  text-align: right;
+}
+
+.submit-btn {
+  background-color: #2d5f3f;
+  border-color: #2d5f3f;
+  height: 40px;
+  padding: 0 32px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.submit-btn:hover {
+  background-color: #1f4a2e !important;
+  border-color: #1f4a2e !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manage-blogs-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .create-btn {
+    width: 100%;
+  }
+
+  .table-container {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-modal {
+    width: 95% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title {
+    font-size: 18px;
+  }
+
+  .table-container .ant-table-thead > tr > th,
+  .table-container .ant-table-tbody > tr > td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,178 @@
+.manage-gallery-page {
+  /* min-height: 100vh; */
+  background: #f0f2f5;
+  padding: 24px;
+}
+
+.manage-gallery-container {
+  /* max-width: 1400px; */
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0 0 0;
+}
+
+.create-btn {
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 500;
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.create-btn:hover {
+  background: #15803d !important;
+  border-color: #15803d !important;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-container .ant-table {
+  font-size: 14px;
+}
+
+.table-container .ant-table-thead > tr > th {
+  background: #16a34a;
+  color: white;
+  font-weight: 600;
+  border-bottom: none;
+  padding: 16px;
+}
+
+.table-container .ant-table-tbody > tr > td {
+  padding: 16px;
+}
+
+.table-container .ant-table-tbody > tr:hover > td {
+  background: #f0fdf4;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.edit-btn {
+  color: #14b8a6;
+}
+
+.edit-btn:hover {
+  background: #f0fdfa !important;
+  color: #0d9488 !important;
+}
+
+.delete-btn:hover {
+  background: #fef2f2 !important;
+}
+
+.gallery-modal .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
+}
+
+.gallery-modal .ant-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.gallery-modal .ant-modal-body {
+  padding: 24px;
+}
+
+.gallery-form .ant-form-item-label > label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-actions {
+  margin-top: 24px;
+  margin-bottom: 0;
+  text-align: right;
+}
+
+.form-actions .ant-btn {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.form-actions .ant-btn-primary {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.form-actions .ant-btn-primary:hover {
+  background: #15803d !important;
+  border-color: #15803d !important;
+}
+
+@media (max-width: 768px) {
+  .manage-gallery-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .create-btn {
+    width: 100%;
+  }
+
+  .table-container {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .gallery-modal .ant-modal-body {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .table-container .ant-table-thead > tr > th,
+  .table-container .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+}

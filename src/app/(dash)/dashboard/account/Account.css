@@ -1,0 +1,260 @@
+.account-container {
+  /* min-height: 100vh; */
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  padding: 2rem 1rem;
+}
+
+.account-content {
+  /* max-width: 900px; */
+  margin: 0 auto;
+}
+
+.account-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.account-title {
+  color: white !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.account-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.account-card {
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.account-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.account-edit-header h5 {
+  margin: 0 !important;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.edit-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  height: auto;
+  font-weight: 600;
+}
+
+.edit-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.account-info-grid {
+  margin-top: 1.5rem;
+}
+
+.account-info-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.account-info-item:hover {
+  background: #f0f0f0;
+  transform: translateX(5px);
+}
+
+.account-info-icon {
+  font-size: 1.5rem;
+  color: #667eea;
+  margin-top: 0.25rem;
+}
+
+.account-info-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.account-info-value {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.password-masked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #999;
+}
+
+.password-icon {
+  color: #667eea;
+}
+
+.two-factor-info {
+  flex: 1;
+}
+
+.two-factor-description {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status-badge.enabled {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.disabled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.account-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e8e8e8;
+}
+
+.cancel-button {
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  height: auto;
+  font-weight: 600;
+  border: 2px solid #d9d9d9;
+}
+
+.cancel-button:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  height: auto;
+  font-weight: 600;
+}
+
+.save-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.form-icon {
+  color: #999;
+}
+
+.two-factor-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.two-factor-toggle-text {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .account-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .account-title {
+    font-size: 2rem !important;
+  }
+
+  .account-subtitle {
+    font-size: 1rem;
+  }
+
+  .account-edit-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-edit-header h5 {
+    font-size: 1.1rem;
+  }
+
+  .edit-button {
+    width: 100%;
+  }
+
+  .account-info-item {
+    padding: 1rem;
+  }
+
+  .account-info-icon {
+    font-size: 1.25rem;
+  }
+
+  .account-form-actions {
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .account-title {
+    font-size: 1.75rem !important;
+  }
+
+  .account-card {
+    border-radius: 8px;
+  }
+
+  .account-info-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .account-info-icon {
+    font-size: 1.5rem;
+  }
+}
