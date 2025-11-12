@@ -21,58 +21,57 @@ import {
 } from "@ant-design/icons";
 import "./ManageGallery.css";
 
-// Mock projects for dropdown
-const mockProjects = [
-  {
-    id: 1,
-    name: "Shanila Tower",
-    type: "Residential",
-    location: "Dhaka",
-    brochureUrl: "Bn1",
-  },
-  {
-    id: 2,
-    name: "Marine Tower",
-    type: "Commercial",
-    location: "Chittagong",
-    brochureUrl: "Bn2",
-  },
-  {
-    id: 3,
-    name: "Arifa Tower",
-    type: "Residential",
-    location: "Jalkhuri",
-    brochureUrl: "Bn1",
-  },
-];
-
-// Mock gallery data
-const mockGalleries = [
-  {
-    id: 1,
-    projectId: 3,
-    projectName: "Arifa Tower",
-    projectType: "Residential",
-    galleryTitle: "Exterior Views",
-    galleryType: "Exterior",
-    images: ["drive.com"],
-    address: "Jalkhuri",
-    brochureUrl: "Bn1",
-  },
-  {
-    id: 2,
-    projectId: 3,
-    projectName: "Arifa Tower",
-    projectType: "Residential",
-    galleryTitle: "Interior Design",
-    galleryType: "Interior",
-    images: ["drive.com"],
-    address: "Jalkhuri",
-    brochureUrl: "Bn1",
-  },
-];
-
 const ManageGallery = () => {
+  // Mock projects for dropdown
+  const mockProjects = [
+    {
+      id: 1,
+      name: "Shanila Tower",
+      type: "Residential",
+      location: "Dhaka",
+      brochureUrl: "Bn1",
+    },
+    {
+      id: 2,
+      name: "Marine Tower",
+      type: "Commercial",
+      location: "Chittagong",
+      brochureUrl: "Bn2",
+    },
+    {
+      id: 3,
+      name: "Arifa Tower",
+      type: "Residential",
+      location: "Jalkhuri",
+      brochureUrl: "Bn1",
+    },
+  ];
+
+  // Mock gallery data
+  const mockGalleries = [
+    {
+      id: 1,
+      projectId: 3,
+      projectName: "Arifa Tower",
+      projectType: "Residential",
+      galleryTitle: "Exterior Views",
+      galleryType: "Exterior",
+      images: ["drive.com"],
+      address: "Jalkhuri",
+      brochureUrl: "Bn1",
+    },
+    {
+      id: 2,
+      projectId: 3,
+      projectName: "Arifa Tower",
+      projectType: "Residential",
+      galleryTitle: "Interior Design",
+      galleryType: "Interior",
+      images: ["drive.com"],
+      address: "Jalkhuri",
+      brochureUrl: "Bn1",
+    },
+  ];
   const [form] = Form.useForm();
   const [galleries, setGalleries] = useState(mockGalleries);
   const [isModalOpen, setIsModalOpen] = useState(false);

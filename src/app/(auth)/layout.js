@@ -19,31 +19,31 @@ export const metadata = {
 
 export default function GeneralLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ConfigProvider theme={{ hashed: false }}>
-          <StyledComponentsRegistry>
-            <Layout className="">
-              <Header />
-              <div className="login-container">
-                {/* Left Side - Building Image */}
-                <div className="login-image-section">
-                  <Image
-                    src={"/loginBg.png"}
-                    alt="Modern Architecture"
-                    className="login-building-image"
-                    fill
-                  />
-                </div>
+    // <html lang="en">
+    //   <body className={inter.className}>
+    //     <ConfigProvider theme={{ hashed: false }}>
+    //       <StyledComponentsRegistry>
+    <Layout className="">
+      <Header />
+      <div className="login-container">
+        {/* Left Side - Building Image */}
+        <div className="login-image-section">
+          <Image
+            src={"/loginBg.png"}
+            alt="Modern Architecture"
+            className="login-building-image"
+            fill
+          />
+        </div>
 
-                {children}
-              </div>
+        {children}
+      </div>
 
-              <Footer />
-            </Layout>
-          </StyledComponentsRegistry>
-        </ConfigProvider>
-      </body>
-    </html>
+      <Footer />
+    </Layout>
+    //       </StyledComponentsRegistry>
+    //     </ConfigProvider>
+    //   </body>
+    // </html>
   );
 }

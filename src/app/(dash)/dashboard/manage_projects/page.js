@@ -23,51 +23,48 @@ import {
 } from "@ant-design/icons";
 import "./ManageProjects.css";
 
-const { Option } = Select;
-
-// Mock data
-const mockProjects = [
-  {
-    id: 1,
-    name: "Shanila Tower",
-    location: "Dhaka",
-    priceRange: "5-10 Crore",
-    sizeSqft: 2500,
-    landArea: "5 Katha",
-    status: "Ongoing",
-    description: "Luxury residential project",
-    amenities: ["Swimming Pool", "Gym", "Parking"],
-    projectType: "Residential",
-    progressPercentage: 65,
-    completionYear: 2025,
-    latitude: 23.8103,
-    longitude: 90.4125,
-    images: [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
-    ],
-  },
-  {
-    id: 2,
-    name: "Marine Tower",
-    location: "Chittagong",
-    priceRange: "8-15 Crore",
-    sizeSqft: 3200,
-    landArea: "7 Katha",
-    status: "Completed",
-    description: "Premium commercial complex",
-    amenities: ["Conference Room", "Cafeteria", "24/7 Security"],
-    projectType: "Commercial",
-    progressPercentage: 100,
-    completionYear: 2024,
-    latitude: 22.3569,
-    longitude: 91.7832,
-    images: [
-      "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80",
-    ],
-  },
-];
-
 const ManageProjects = () => {
+  // Mock data
+  const mockProjects = [
+    {
+      id: 1,
+      name: "Shanila Tower",
+      location: "Dhaka",
+      priceRange: "5-10 Crore",
+      sizeSqft: 2500,
+      landArea: "5 Katha",
+      status: "Ongoing",
+      description: "Luxury residential project",
+      amenities: ["Swimming Pool", "Gym", "Parking"],
+      projectType: "Residential",
+      progressPercentage: 65,
+      completionYear: 2025,
+      latitude: 23.8103,
+      longitude: 90.4125,
+      images: [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
+      ],
+    },
+    {
+      id: 2,
+      name: "Marine Tower",
+      location: "Chittagong",
+      priceRange: "8-15 Crore",
+      sizeSqft: 3200,
+      landArea: "7 Katha",
+      status: "Completed",
+      description: "Premium commercial complex",
+      amenities: ["Conference Room", "Cafeteria", "24/7 Security"],
+      projectType: "Commercial",
+      progressPercentage: 100,
+      completionYear: 2024,
+      latitude: 22.3569,
+      longitude: 91.7832,
+      images: [
+        "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80",
+      ],
+    },
+  ];
   const [form] = Form.useForm();
   const [projects, setProjects] = useState(mockProjects);
   const [isModalOpen, setIsModalOpen] = useState(false);

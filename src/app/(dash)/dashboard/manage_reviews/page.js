@@ -22,53 +22,51 @@ import {
   PictureOutlined,
 } from "@ant-design/icons";
 import "./ManageReviews.css";
-
-const { Title, Text } = Typography;
-
-const mockReviews = [
-  {
-    id: 1,
-    reviewerName: "John Smith",
-    description:
-      "Excellent service! The team was professional and delivered beyond expectations. Highly recommended for anyone looking for quality work.",
-    isVideo: false,
-    mediaUrl: "https://example.com/review1.jpg",
-    rating: 5,
-    date: "2024-01-15",
-  },
-  {
-    id: 2,
-    reviewerName: "Sarah Johnson",
-    description:
-      "Amazing video review of their services. The quality and attention to detail is outstanding!",
-    isVideo: true,
-    mediaUrl: "https://youtube.com/watch?v=abc123",
-    rating: 4,
-    date: "2024-01-12",
-  },
-  {
-    id: 3,
-    reviewerName: "Mike Wilson",
-    description:
-      "Good experience overall. The team was responsive and the work was completed on time.",
-    isVideo: false,
-    mediaUrl: "https://example.com/review3.jpg",
-    rating: 4,
-    date: "2024-01-10",
-  },
-  {
-    id: 4,
-    reviewerName: "Emily Davis",
-    description:
-      "Video testimonial - couldn't be happier with the results! The transformation was incredible.",
-    isVideo: true,
-    mediaUrl: "https://vimeo.com/123456",
-    rating: 5,
-    date: "2024-01-08",
-  },
-];
+import Image from "next/image";
 
 const ManageReviews = () => {
+  const mockReviews = [
+    {
+      id: 1,
+      reviewerName: "John Smith",
+      description:
+        "Excellent service! The team was professional and delivered beyond expectations. Highly recommended for anyone looking for quality work.",
+      isVideo: false,
+      mediaUrl: "https://example.com/review1.jpg",
+      rating: 5,
+      date: "2024-01-15",
+    },
+    {
+      id: 2,
+      reviewerName: "Sarah Johnson",
+      description:
+        "Amazing video review of their services. The quality and attention to detail is outstanding!",
+      isVideo: true,
+      mediaUrl: "https://youtube.com/watch?v=abc123",
+      rating: 4,
+      date: "2024-01-12",
+    },
+    {
+      id: 3,
+      reviewerName: "Mike Wilson",
+      description:
+        "Good experience overall. The team was responsive and the work was completed on time.",
+      isVideo: false,
+      mediaUrl: "https://example.com/review3.jpg",
+      rating: 4,
+      date: "2024-01-10",
+    },
+    {
+      id: 4,
+      reviewerName: "Emily Davis",
+      description:
+        "Video testimonial - couldn't be happier with the results! The transformation was incredible.",
+      isVideo: true,
+      mediaUrl: "https://vimeo.com/123456",
+      rating: 5,
+      date: "2024-01-08",
+    },
+  ];
   const [reviews, setReviews] = useState(mockReviews);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
@@ -136,7 +134,7 @@ const ManageReviews = () => {
             </a>
           ) : (
             <div className="image-preview">
-              <img src={url} alt="Review" className="review-image" />
+              <Image src={url} alt="Review" className="review-image" fill />
             </div>
           )}
         </div>
@@ -312,13 +310,13 @@ const ManageReviews = () => {
     <div className="manage-reviews-page">
       <div className="reviews-header">
         <div className="header-content">
-          <Title level={2} className="reviews-title">
+          <Typography.Title level={2} className="reviews-title">
             <UserOutlined className="title-icon" />
             Manage Reviews
-          </Title>
-          <Text className="reviews-subtitle">
+          </Typography.Title>
+          <Typography.Text className="reviews-subtitle">
             Manage customer reviews and testimonials
-          </Text>
+          </Typography.Text>
         </div>
         <Button
           type="primary"
@@ -477,9 +475,9 @@ const ManageReviews = () => {
 
             {isVideo && (
               <div className="video-note">
-                <Text type="secondary">
+                <Typography.Text type="secondary">
                   Enter the full URL to the video (YouTube, Vimeo, etc.)
-                </Text>
+                </Typography.Text>
               </div>
             )}
           </div>

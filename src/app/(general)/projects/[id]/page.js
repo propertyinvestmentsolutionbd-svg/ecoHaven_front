@@ -10,6 +10,7 @@ import {
   LuWrench,
 } from "react-icons/lu";
 import { FaHome } from "react-icons/fa";
+import Image from "next/image";
 
 // Mock data - will be replaced with API response
 const projectData = {
@@ -79,7 +80,7 @@ const ProjectDetails = () => {
             <div className="gallery-thumbnails">
               {projectData.galleryImages.map((img, index) => (
                 <div key={index} className="thumbnail">
-                  <img src={img} alt={`Gallery ${index + 1}`} />
+                  <Image src={img} alt={`Gallery ${index + 1}`} fill />
                   <div className="thumbnail-label">
                     {index === 0 ? "Bedroom" : index === 1 ? "Dining" : "View"}
                   </div>
@@ -203,9 +204,10 @@ const ProjectDetails = () => {
           <h2 className="section-title">Project Location</h2>
           <div className="location-card">
             <div className="map-container">
-              <img
+              <Image
                 src={projectData.location.mapImage}
                 alt="Project Location Map"
+                fill
               />
               <div className="map-overlay">
                 <a

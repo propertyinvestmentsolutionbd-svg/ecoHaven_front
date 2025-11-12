@@ -19,61 +19,67 @@ import {
   CalendarOutlined,
   LinkOutlined,
 } from "@ant-design/icons";
-import ReactQuill from "react-quill-new";
+import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
 import "./ManageCareers.css";
-
-const { Title, Text } = Typography;
-
-const mockCareers = [
-  {
-    id: 1,
-    title: "Senior Frontend Developer",
-    description:
-      "<p>We are looking for a skilled Frontend Developer to join our team. You will be responsible for building responsive web applications using modern technologies.</p><ul><li>Develop and maintain web applications</li><li>Collaborate with design and backend teams</li><li>Write clean, maintainable code</li></ul>",
-    type: "full-time",
-    deadline: "2024-02-28",
-    redirectLink: "https://company.com/careers/frontend-dev",
-    status: "active",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    title: "UX/UI Designer",
-    description:
-      "<p>Join our design team to create beautiful and intuitive user experiences. We need someone passionate about user-centered design.</p><ul><li>Create wireframes and prototypes</li><li>Conduct user research</li><li>Collaborate with development team</li></ul>",
-    type: "full-time",
-    deadline: "2024-03-15",
-    redirectLink: "https://company.com/careers/ux-designer",
-    status: "active",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: 3,
-    title: "Summer Intern - Marketing",
-    description:
-      "<p>Great opportunity for students to gain real-world marketing experience. Paid internship with potential for full-time offer.</p><ul><li>Assist with social media campaigns</li><li>Content creation and scheduling</li><li>Market research and analysis</li></ul>",
-    type: "internship",
-    deadline: "2024-02-15",
-    redirectLink: "https://company.com/careers/marketing-intern",
-    status: "active",
-    createdAt: "2024-01-08",
-  },
-  {
-    id: 4,
-    title: "DevOps Engineer",
-    description:
-      "<p>Looking for a DevOps Engineer to streamline our deployment processes and improve infrastructure reliability.</p><ul><li>Manage cloud infrastructure</li><li>Implement CI/CD pipelines</li><li>Monitor system performance</li></ul>",
-    type: "contract",
-    deadline: "2024-01-31",
-    redirectLink: "https://company.com/careers/devops",
-    status: "expired",
-    createdAt: "2023-12-20",
-  },
-];
-
-const ManageCareers = () => {
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+  loading: () => <div>Loading editor...</div>,
+});
+export default function ManageCareers() {
+  const mockCareers = [
+    {
+      id: 1,
+      title: "Senior Frontend Developer",
+      description:
+        "<p>We are looking for a skilled Frontend Developer to join our team. You will be responsible for building responsive web applications using modern technologies.</p><ul><li>Develop and maintain web applications</li><li>Collaborate with design and backend teams</li><li>Write clean, maintainable code</li></ul>",
+      type: "full-time",
+      deadline: "2024-02-28",
+      redirectLink: "https://company.com/careers/frontend-dev",
+      status: "active",
+      createdAt: "2024-01-15",
+    },
+    {
+      id: 2,
+      title: "UX/UI Designer",
+      description:
+        "<p>Join our design team to create beautiful and intuitive user experiences. We need someone passionate about user-centered design.</p><ul><li>Create wireframes and prototypes</li><li>Conduct user research</li><li>Collaborate with development team</li></ul>",
+      type: "full-time",
+      deadline: "2024-03-15",
+      redirectLink: "https://company.com/careers/ux-designer",
+      status: "active",
+      createdAt: "2024-01-10",
+    },
+    {
+      id: 3,
+      title: "Summer Intern - Marketing",
+      description:
+        "<p>Great opportunity for students to gain real-world marketing experience. Paid internship with potential for full-time offer.</p><ul><li>Assist with social media campaigns</li><li>Content creation and scheduling</li><li>Market research and analysis</li></ul>",
+      type: "internship",
+      deadline: "2024-02-15",
+      redirectLink: "https://company.com/careers/marketing-intern",
+      status: "active",
+      createdAt: "2024-01-08",
+    },
+    {
+      id: 4,
+      title: "DevOps Engineer",
+      description:
+        "<p>Looking for a DevOps Engineer to streamline our deployment processes and improve infrastructure reliability.</p><ul><li>Manage cloud infrastructure</li><li>Implement CI/CD pipelines</li><li>Monitor system performance</li></ul>",
+      type: "contract",
+      deadline: "2024-01-31",
+      redirectLink: "https://company.com/careers/devops",
+      status: "expired",
+      createdAt: "2023-12-20",
+    },
+  ];
+  const moment = {
+    format: (date, format) => date,
+    isBefore: (date, unit) => new Date(date) < new Date(),
+    startOf: (unit) => new Date(new Date().setHours(0, 0, 0, 0)),
+  };
   const [careers, setCareers] = useState(mockCareers);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingCareer, setEditingCareer] = useState(null);
@@ -326,13 +332,13 @@ const ManageCareers = () => {
     <div className="manage-careers-page">
       <div className="manageCareer-header">
         <div className="header-content">
-          <Title level={2} className="manageCareer-title">
+          <Typography.Title level={2} className="manageCareer-title">
             <CalendarOutlined className="title-icon" />
             Manage Careers
-          </Title>
-          <Text className="manageCareer-subtitle">
+          </Typography.Title>
+          <Typography.Text className="manageCareer-subtitle">
             Create and manage job postings and career opportunities
-          </Text>
+          </Typography.Text>
         </div>
         <Button
           type="primary"
@@ -503,12 +509,4 @@ const ManageCareers = () => {
       </Modal>
     </div>
   );
-};
-
-const moment = {
-  format: (date, format) => date,
-  isBefore: (date, unit) => new Date(date) < new Date(),
-  startOf: (unit) => new Date(new Date().setHours(0, 0, 0, 0)),
-};
-
-export default ManageCareers;
+}

@@ -20,22 +20,22 @@ export const metadata = {
 
 export default function GeneralLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ConfigProvider theme={{ hashed: false }}>
-          <StyledComponentsRegistry>
-            <Layout className="min-h-screen">
-              <Header />
-              <PageLoader />
-              <ImagePopup />
+    // <html lang="en">
+    //   <body className={inter.className}>
+    //     <ConfigProvider theme={{ hashed: false }}>
+    //       <StyledComponentsRegistry>
+    <Layout className="min-h-screen">
+      <Header />
+      <PageLoader />
+      <ImagePopup />
 
-              {children}
+      {children}
 
-              <Footer />
-            </Layout>
-          </StyledComponentsRegistry>
-        </ConfigProvider>
-      </body>
-    </html>
+      <Footer />
+    </Layout>
+    //       </StyledComponentsRegistry>
+    //     </ConfigProvider>
+    //   </body>
+    // </html>
   );
 }

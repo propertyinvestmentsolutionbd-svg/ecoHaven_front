@@ -24,43 +24,41 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import "./AddEmployee.css";
-
-const { Title, Text } = Typography;
-
-const mockEmployees = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@company.com",
-    contactNo: "+1 234 567 8900",
-    role: "employee",
-    address: "123 Main Street, City, Country",
-    linkedinUrl: "https://linkedin.com/in/johndoe",
-    profileImg: "https://example.com/profile1.jpg",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane.smith@company.com",
-    contactNo: "+1 234 567 8901",
-    role: "admin",
-    address: "456 Oak Avenue, City, Country",
-    linkedinUrl: "https://linkedin.com/in/janesmith",
-    profileImg: "https://example.com/profile2.jpg",
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike.johnson@company.com",
-    contactNo: "+1 234 567 8902",
-    role: "employee",
-    address: "789 Pine Road, City, Country",
-    linkedinUrl: "https://linkedin.com/in/mikejohnson",
-    profileImg: "https://example.com/profile3.jpg",
-  },
-];
+import Image from "next/image";
 
 const ManageEmployees = () => {
+  const mockEmployees = [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@company.com",
+      contactNo: "+1 234 567 8900",
+      role: "employee",
+      address: "123 Main Street, City, Country",
+      linkedinUrl: "https://linkedin.com/in/johndoe",
+      profileImg: "https://example.com/profile1.jpg",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane.smith@company.com",
+      contactNo: "+1 234 567 8901",
+      role: "admin",
+      address: "456 Oak Avenue, City, Country",
+      linkedinUrl: "https://linkedin.com/in/janesmith",
+      profileImg: "https://example.com/profile2.jpg",
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      email: "mike.johnson@company.com",
+      contactNo: "+1 234 567 8902",
+      role: "employee",
+      address: "789 Pine Road, City, Country",
+      linkedinUrl: "https://linkedin.com/in/mikejohnson",
+      profileImg: "https://example.com/profile3.jpg",
+    },
+  ];
   const [employees, setEmployees] = useState(mockEmployees);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
@@ -77,7 +75,7 @@ const ManageEmployees = () => {
         <div className="employee-profile">
           <div className="profile-avatar">
             {record.profileImg ? (
-              <img src={record.profileImg} alt={name} />
+              <Image src={record.profileImg} alt={name} fill />
             ) : (
               <UserOutlined />
             )}
@@ -273,13 +271,13 @@ const ManageEmployees = () => {
     <div className="manage-employees-page">
       <div className="employees-header">
         <div className="header-content">
-          <Title level={2} className="employees-title">
+          <Typography.Title level={2} className="employees-title">
             <TeamOutlined className="title-icon" />
             Manage Employees
-          </Title>
-          <Text className="employees-subtitle">
+          </Typography.Title>
+          <Typography.Text className="employees-subtitle">
             Manage your team members and their information
-          </Text>
+          </Typography.Text>
         </div>
         <Button
           type="primary"
