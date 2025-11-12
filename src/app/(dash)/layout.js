@@ -44,6 +44,11 @@ export default function DashboardLayout({ children }) {
   const menuItems = [
     { key: "/dashboard", icon: <HomeOutlined />, label: "Home" },
     { key: "/dashboard/profile", icon: <ImProfile />, label: "Profile" },
+    {
+      key: "/dashboard/menu_permission",
+      icon: <ImProfile />,
+      label: "Permission",
+    },
     { key: "/dashboard/account", icon: <HomeOutlined />, label: "Account" },
     {
       key: "/dashboard/manage_projects",

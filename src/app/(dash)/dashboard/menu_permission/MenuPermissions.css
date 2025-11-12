@@ -1,0 +1,197 @@
+.menu-permissions-layout {
+  /* min-height: 100vh; */
+  background-color: #f5f5f5;
+}
+
+.menu-permissions-content {
+  padding: 24px;
+  /* max-width: 1400px; */
+  /* margin: 0 auto; */
+}
+
+.menu-permissions-header {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-permissions-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.menu-permissions-header p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.employee-selection-section {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-selection-section label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.employee-select {
+  width: 100%;
+  max-width: 500px;
+}
+
+.permissions-table-wrapper {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.permissions-table .ant-table-thead > tr > th {
+  background-color: #27ae60;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 16px;
+}
+
+.permissions-table .ant-table-tbody > tr > td {
+  padding: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.permissions-table .ant-table-tbody > tr:hover > td {
+  background-color: #f0f9f4;
+}
+
+.permissions-table .ant-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.permissions-table .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #27ae60;
+  border-color: #27ae60;
+}
+
+.permissions-table .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.permissions-table .ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #27ae60;
+}
+
+.permissions-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: white;
+  padding: 20px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.permissions-actions .ant-btn-primary {
+  background-color: #27ae60;
+  border-color: #27ae60;
+  height: 40px;
+  padding: 0 32px;
+  font-weight: 500;
+}
+
+.permissions-actions .ant-btn-primary:hover {
+  background-color: #229954;
+  border-color: #229954;
+}
+
+.permissions-actions .ant-btn-primary:disabled {
+  background-color: #95a5a6;
+  border-color: #95a5a6;
+  opacity: 0.6;
+}
+
+.empty-state {
+  background: white;
+  padding: 60px 24px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  color: #7f8c8d;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-permissions-content {
+    padding: 16px;
+  }
+
+  .menu-permissions-header {
+    padding: 20px;
+  }
+
+  .menu-permissions-header h1 {
+    font-size: 20px;
+  }
+
+  .employee-selection-section {
+    padding: 20px;
+  }
+
+  .employee-select {
+    max-width: 100%;
+  }
+
+  .permissions-table-wrapper {
+    padding: 16px;
+  }
+
+  .permissions-table .ant-table-thead > tr > th,
+  .permissions-table .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+
+  .permissions-actions {
+    padding: 16px;
+    justify-content: center;
+  }
+
+  .permissions-actions .ant-btn-primary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-permissions-header h1 {
+    font-size: 18px;
+  }
+
+  .menu-permissions-header p {
+    font-size: 13px;
+  }
+
+  .employee-selection-section label {
+    font-size: 14px;
+  }
+
+  .permissions-table-wrapper {
+    padding: 12px;
+  }
+}
