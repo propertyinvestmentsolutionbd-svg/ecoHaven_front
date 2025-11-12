@@ -71,9 +71,9 @@ export default function DashboardLayout({ children }) {
       label: "Employee",
     },
     {
-      key: "/dashboard/settings",
+      key: "/dashboard/manage_reviews",
       icon: <SettingOutlined />,
-      label: "Settings",
+      label: "Reviews",
     },
     { key: "/dashboard/manage_blogs", icon: <ReadOutlined />, label: "Blogs" },
   ];
