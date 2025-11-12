@@ -1,17 +1,22 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
+  Table,
+  Button,
+  Modal,
   Form,
   Input,
-  Button,
-  Card,
   Select,
-  Row,
-  Col,
-  Typography,
+  Upload,
+  message,
+  Card,
   Divider,
+  Typography,
 } from "antd";
 import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
   UserOutlined,
   MailOutlined,
   PhoneOutlined,
@@ -19,26 +24,172 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import "./AddEmployee.css";
+
 const { Title, Text } = Typography;
 
-const AddEmployee = () => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+const mockEmployees = [
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@company.com",
+    contactNo: "+1 234 567 8900",
+    role: "employee",
+    address: "123 Main Street, City, Country",
+    linkedinUrl: "https://linkedin.com/in/johndoe",
+    profileImg: "https://example.com/profile1.jpg",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    email: "jane.smith@company.com",
+    contactNo: "+1 234 567 8901",
+    role: "admin",
+    address: "456 Oak Avenue, City, Country",
+    linkedinUrl: "https://linkedin.com/in/janesmith",
+    profileImg: "https://example.com/profile2.jpg",
+  },
+  {
+    id: 3,
+    name: "Mike Johnson",
+    email: "mike.johnson@company.com",
+    contactNo: "+1 234 567 8902",
+    role: "employee",
+    address: "789 Pine Road, City, Country",
+    linkedinUrl: "https://linkedin.com/in/mikejohnson",
+    profileImg: "https://example.com/profile3.jpg",
+  },
+];
 
-  const onFinish = async (values) => {
-    setLoading(true);
-    try {
-      console.log("Form values:", values);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // message.success("Employee created successfully!");
-      form.resetFields();
-      // navigate("/dashboard");
-    } catch (error) {
-      // message.error("Failed to create employee. Please try again.");
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+const ManageEmployees = () => {
+  const [employees, setEmployees] = useState(mockEmployees);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
+
+  const columns = [
+    {
+      title: "Profile",
+      dataIndex: "name",
+      key: "profile",
+      render: (name, record) => (
+        <div className="employee-profile">
+          <div className="profile-avatar">
+            {record.profileImg ? (
+              <img src={record.profileImg} alt={name} />
+            ) : (
+              <UserOutlined />
+            )}
+          </div>
+          <div className="profile-info">
+            <div className="employee-name">{name}</div>
+            <div className="employee-role">{record.role}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Contact No",
+      dataIndex: "contactNo",
+      key: "contactNo",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (address) => (
+        <div className="address-cell">
+          {address && address.length > 50
+            ? `${address.substring(0, 50)}...`
+            : address}
+        </div>
+      ),
+    },
+    {
+      title: "LinkedIn",
+      dataIndex: "linkedinUrl",
+      key: "linkedinUrl",
+      render: (url) =>
+        url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="linkedin-link"
+          >
+            View Profile
+          </a>
+        ) : (
+          <span className="no-link">Not provided</span>
+        ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <div className="action-buttons">
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+            className="edit-btn"
+          >
+            Edit
+          </Button>
+          <Button
+            type="link"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.id)}
+            className="delete-btn"
+          />
+        </div>
+      ),
+    },
+  ];
+
+  const handleEdit = (employee) => {
+    setEditingEmployee(employee);
+    form.setFieldsValue({
+      name: employee.name,
+      email: employee.email,
+      contactNo: employee.contactNo,
+      role: employee.role,
+      address: employee.address,
+      linkedinUrl: employee.linkedinUrl,
+    });
+    setIsModalVisible(true);
+  };
+
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this employee?",
+      content: "This action cannot be undone.",
+      onOk() {
+        setEmployees(employees.filter((employee) => employee.id !== id));
+        message.success("Employee deleted successfully");
+      },
+    });
+  };
+
+  const handleCreate = () => {
+    setEditingEmployee(null);
+    form.resetFields();
+    setFileList([]);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setEditingEmployee(null);
+    form.resetFields();
+    setFileList([]);
   };
 
   const validatePhone = (_, value) => {
@@ -51,8 +202,9 @@ const AddEmployee = () => {
   };
 
   const validatePassword = (_, value) => {
-    if (!value) return Promise.reject(new Error("Please input password!"));
-    if (value.length < 6)
+    if (!value && !editingEmployee)
+      return Promise.reject(new Error("Please input password!"));
+    if (value && value.length < 6)
       return Promise.reject(
         new Error("Password must be at least 6 characters!")
       );
@@ -67,237 +219,290 @@ const AddEmployee = () => {
     },
   });
 
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      if (editingEmployee) {
+        setEmployees(
+          employees.map((employee) =>
+            employee.id === editingEmployee.id
+              ? {
+                  ...employee,
+                  ...values,
+                  profileImg:
+                    fileList.length > 0
+                      ? URL.createObjectURL(fileList[0].originFileObj)
+                      : employee.profileImg,
+                }
+              : employee
+          )
+        );
+        message.success("Employee updated successfully");
+      } else {
+        const newEmployee = {
+          id: employees.length + 1,
+          ...values,
+          profileImg:
+            fileList.length > 0
+              ? URL.createObjectURL(fileList[0].originFileObj)
+              : null,
+        };
+        setEmployees([...employees, newEmployee]);
+        message.success("Employee created successfully");
+      }
+      handleModalClose();
+    } catch (error) {
+      message.error("Failed to save employee. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const uploadProps = {
+    fileList,
+    onChange: ({ fileList }) => setFileList(fileList),
+    beforeUpload: () => false,
+    listType: "picture-card",
+    accept: "image/*",
+    maxCount: 1,
+  };
+
   return (
-    <div className="add-employee-layout">
-      <div className="add-employee-content">
-        <div className="form-container">
-          {/* Header */}
-          <div className="form-header">
-            <Title level={3} className="form-title">
-              <TeamOutlined className="title-icon" />
-              Create New Employee
-            </Title>
-            <Text className="form-subtitle">
-              Fill out the form to add a new team member
-            </Text>
+    <div className="manage-employees-page">
+      <div className="employees-header">
+        <div className="header-content">
+          <Title level={2} className="employees-title">
+            <TeamOutlined className="title-icon" />
+            Manage Employees
+          </Title>
+          <Text className="employees-subtitle">
+            Manage your team members and their information
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleCreate}
+          className="create-btn"
+        >
+          Add Employee
+        </Button>
+      </div>
+
+      <div className="table-container">
+        <Card className="employees-card">
+          <Table
+            columns={columns}
+            dataSource={employees}
+            rowKey="id"
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showTotal: (total) => `Total ${total} employees`,
+            }}
+            scroll={{ x: 1000 }}
+            className="employees-table"
+          />
+        </Card>
+      </div>
+
+      <Modal
+        title={
+          <div className="modal-title">
+            <TeamOutlined className="modal-title-icon" />
+            {editingEmployee ? "Edit Employee" : "Add New Employee"}
+          </div>
+        }
+        open={isModalVisible}
+        onCancel={handleModalClose}
+        footer={null}
+        width={700}
+        className="employee-modal"
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="employee-form"
+        >
+          {/* Personal Information */}
+          <Divider orientation="left" className="section-divider">
+            Personal Information
+          </Divider>
+
+          <div className="form-row">
+            <Form.Item
+              name="name"
+              label="Full Name"
+              rules={[
+                { required: true, message: "Please input employee name!" },
+                { min: 2, message: "Name must be at least 2 characters!" },
+              ]}
+              className="form-item-half"
+            >
+              <Input placeholder="John Doe" prefix={<UserOutlined />} />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label="Email Address"
+              rules={[
+                { required: true, message: "Please input email!" },
+                { type: "email", message: "Enter a valid email!" },
+              ]}
+              className="form-item-half"
+            >
+              <Input
+                placeholder="john.doe@company.com"
+                prefix={<MailOutlined />}
+              />
+            </Form.Item>
           </div>
 
-          <Card className="employee-form-card">
-            <Form
-              form={form}
-              name="createEmployee"
-              onFinish={onFinish}
-              layout="vertical"
-              size="middle"
-              scrollToFirstError
+          <div className="form-row">
+            <Form.Item
+              name="contactNo"
+              label="Contact Number"
+              rules={[
+                { required: true, message: "Please input contact number!" },
+                { validator: validatePhone },
+              ]}
+              className="form-item-half"
             >
-              {/* Personal Info */}
-              <Divider orientation="left" className="section-divider">
-                Personal Information
-              </Divider>
+              <Input placeholder="+1 234 567 8900" prefix={<PhoneOutlined />} />
+            </Form.Item>
 
-              <Row gutter={[16, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Full Name"
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input employee name!",
-                      },
-                      {
-                        min: 2,
-                        message: "Name must be at least 2 characters!",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="John Doe" prefix={<UserOutlined />} />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Email Address"
-                    name="email"
-                    rules={[
-                      { required: true, message: "Please input email!" },
-                      { type: "email", message: "Enter a valid email!" },
-                    ]}
-                  >
-                    <Input
-                      placeholder="john.doe@company.com"
-                      prefix={<MailOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={[16, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Contact Number"
-                    name="contactNo"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input contact number!",
-                      },
-                      { validator: validatePhone },
-                    ]}
-                  >
-                    <Input
-                      placeholder="+1 234 567 8900"
-                      prefix={<PhoneOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Role"
-                    name="role"
-                    rules={[
-                      { required: true, message: "Please select a role!" },
-                    ]}
-                    initialValue="employee"
-                  >
-                    <Select
-                      options={[
-                        { value: "admin", label: "admin" },
-                        { value: "employee", label: "employee" },
-                      ]}
-                      placeholder="Select role"
-                    ></Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              {/* Address */}
-              <Divider orientation="left" className="section-divider">
-                Address
-              </Divider>
-
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    min: 5,
-                    message: "Address should be at least 5 characters!",
-                  },
+            <Form.Item
+              name="role"
+              label="Role"
+              rules={[{ required: true, message: "Please select a role!" }]}
+              initialValue="employee"
+              className="form-item-half"
+            >
+              <Select
+                options={[
+                  { value: "admin", label: "Admin" },
+                  { value: "employee", label: "Employee" },
                 ]}
-              >
-                <Input.TextArea
-                  rows={2}
-                  placeholder="123 Main Street, City, Country"
-                  showCount
-                  maxLength={255}
-                />
-              </Form.Item>
+                placeholder="Select role"
+              />
+            </Form.Item>
+          </div>
 
-              {/* Security */}
+          {/* Address */}
+          <Divider orientation="left" className="section-divider">
+            Address
+          </Divider>
+
+          <Form.Item
+            name="address"
+            label="Address"
+            rules={[
+              {
+                min: 5,
+                message: "Address should be at least 5 characters!",
+              },
+            ]}
+          >
+            <Input.TextArea
+              rows={2}
+              placeholder="123 Main Street, City, Country"
+              showCount
+              maxLength={255}
+            />
+          </Form.Item>
+
+          {/* Profile Image */}
+          <Divider orientation="left" className="section-divider">
+            Profile Image
+          </Divider>
+
+          <Form.Item label="Upload Profile Photo">
+            <Upload {...uploadProps}>
+              {fileList.length >= 1 ? null : (
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
+
+          {/* LinkedIn */}
+          <Divider orientation="left" className="section-divider">
+            Additional Information
+          </Divider>
+
+          <Form.Item
+            name="linkedinUrl"
+            label="LinkedIn Profile"
+            rules={[{ type: "url", message: "Enter a valid URL!" }]}
+          >
+            <Input placeholder="https://linkedin.com/in/username" />
+          </Form.Item>
+
+          {/* Account Security - Only for new employees */}
+          {!editingEmployee && (
+            <>
               <Divider orientation="left" className="section-divider">
                 Account Security
               </Divider>
 
-              <Row gutter={[16, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      { required: true, message: "Please input password!" },
-                      { validator: validatePassword },
-                    ]}
-                  >
-                    <Input.Password
-                      placeholder="Enter password"
-                      prefix={<LockOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
+              <div className="form-row">
+                <Form.Item
+                  name="password"
+                  label="Password"
+                  rules={[{ validator: validatePassword }]}
+                  className="form-item-half"
+                >
+                  <Input.Password
+                    placeholder="Enter password"
+                    prefix={<LockOutlined />}
+                  />
+                </Form.Item>
 
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Confirm Password"
-                    name="confirmPassword"
-                    dependencies={["password"]}
-                    rules={[
-                      { required: true, message: "Please confirm password!" },
-                      validateConfirmPassword,
-                    ]}
-                  >
-                    <Input.Password
-                      placeholder="Confirm password"
-                      prefix={<LockOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
+                <Form.Item
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  dependencies={["password"]}
+                  rules={[validateConfirmPassword]}
+                  className="form-item-half"
+                >
+                  <Input.Password
+                    placeholder="Confirm password"
+                    prefix={<LockOutlined />}
+                  />
+                </Form.Item>
+              </div>
+            </>
+          )}
 
-              {/* Additional */}
-              <Divider orientation="left" className="section-divider">
-                Additional Information
-              </Divider>
-
-              <Row gutter={[16, 0]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="LinkedIn Profile"
-                    name="linkedinUrl"
-                    rules={[{ type: "url", message: "Enter a valid URL!" }]}
-                  >
-                    <Input placeholder="https://linkedin.com/in/username" />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Profile Image URL"
-                    name="profileImg"
-                    rules={[{ type: "url", message: "Enter a valid URL!" }]}
-                  >
-                    <Input placeholder="https://example.com/profile.jpg" />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              {/* Buttons */}
-              <Form.Item className="form-actions">
-                <div className="button-group">
-                  <Button
-                    size="middle"
-                    onClick={() => navigate("/dashboard")}
-                    className="cancel-button"
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    size="middle"
-                    loading={loading}
-                    className="submit-button"
-                  >
-                    Create Employee
-                  </Button>
-                </div>
-              </Form.Item>
-            </Form>
-          </Card>
-
-          <div className="form-footer">
-            <Text className="footer-text">
-              Fields marked with * are required. Credentials will be sent via
-              email.
-            </Text>
-          </div>
-        </div>
-      </div>
+          {/* Form Actions */}
+          <Form.Item className="form-actions">
+            <div className="button-group">
+              <Button
+                onClick={handleModalClose}
+                disabled={loading}
+                className="cancel-button"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="submit-button"
+              >
+                {editingEmployee ? "Update Employee" : "Create Employee"}
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
 
-export default AddEmployee;
+export default ManageEmployees;
