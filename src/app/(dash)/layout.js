@@ -61,9 +61,9 @@ export default function DashboardLayout({ children }) {
       label: "Contact",
     },
     {
-      key: "/dashboard/accounting",
+      key: "/dashboard/manage_career",
       icon: <DollarOutlined />,
-      label: "Accounting",
+      label: "Career",
     },
     {
       key: "/dashboard/employee/create",

@@ -1,0 +1,468 @@
+.manage-careers-page {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.manageCareer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.manageCareer-title {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #333;
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.title-icon {
+  margin-right: 12px;
+  color: #2d5f3f;
+}
+
+.manageCareer-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-top: 4px;
+  display: block;
+}
+
+.create-btn {
+  background-color: #2d5f3f;
+  border-color: #2d5f3f;
+  height: 40px;
+  padding: 0 24px;
+  font-weight: 500;
+}
+
+.create-btn:hover {
+  background-color: #1f4a2e !important;
+  border-color: #1f4a2e !important;
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.careers-card {
+  border: none;
+  border-radius: 8px;
+}
+
+.careers-card .ant-card-body {
+  padding: 0;
+}
+
+.careers-table .ant-table-thead > tr > th {
+  background-color: #2d5f3f;
+  color: white;
+  font-weight: 600;
+  border-bottom: none;
+  white-space: nowrap;
+}
+
+.careers-table .ant-table-tbody > tr:nth-child(even) {
+  background-color: #e8f5e9;
+}
+
+.careers-table .ant-table-tbody > tr:hover > td {
+  background-color: #d4edda !important;
+}
+
+.job-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.job-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.job-type {
+  font-size: 12px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.description-preview {
+  line-height: 1.4;
+  color: #666;
+}
+
+.description-preview * {
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.description-preview ul, .description-preview ol {
+  padding-left: 16px;
+}
+
+.type-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.type-full-time {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.type-part-time {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.type-contract {
+  background-color: #fff7e6;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+}
+
+.type-internship {
+  background-color: #f9f0ff;
+  color: #722ed1;
+  border: 1px solid #d3adf7;
+}
+
+.type-freelance {
+  background-color: #fff2e8;
+  color: #fa541c;
+  border: 1px solid #ffbb96;
+}
+
+.deadline-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deadline-icon {
+  color: #2d5f3f;
+}
+
+.expired-date {
+  color: #ff4d4f;
+  text-decoration: line-through;
+}
+
+.expired-badge {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.application-link {
+  color: #2d5f3f;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.application-link:hover {
+  color: #1f4a2e;
+  text-decoration: underline;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-active {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.status-expired {
+  background-color: #fff2f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-btn {
+  color: #2d5f3f;
+  padding: 0;
+}
+
+.edit-btn:hover {
+  color: #1f4a2e;
+}
+
+.delete-btn {
+  padding: 0;
+}
+
+/* Modal Styles */
+.career-modal .ant-modal-header {
+  border-bottom: 1px solid #e8e8e8;
+  padding: 20px 24px;
+}
+
+.career-modal .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.modal-title-icon {
+  margin-right: 8px;
+  color: #2d5f3f;
+}
+
+.career-form {
+  margin-top: 0;
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a3a2e;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-item-half {
+  margin-bottom: 0;
+}
+
+.career-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.career-form .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  color: #ff4d4f;
+}
+
+.career-form .ant-input,
+.career-form .ant-select-selector,
+.career-form .ant-picker {
+  border: 2px solid #e8e8e8;
+  border-radius: 4px;
+}
+
+.career-form .ant-input:focus,
+.career-form .ant-select-focused .ant-select-selector,
+.career-form .ant-picker-focused {
+  border-color: #2d5f3f !important;
+  box-shadow: 0 0 0 2px rgba(45, 95, 63, 0.1);
+}
+
+.career-form .ant-input::placeholder {
+  color: #bbb;
+}
+
+/* React Quill Styles */
+.quill-editor-container {
+  margin-bottom: 16px;
+}
+
+.quill-editor-container .ql-toolbar {
+  border-top: 1px solid #e8e8e8;
+  border-left: 1px solid #e8e8e8;
+  border-right: 1px solid #e8e8e8;
+  border-radius: 4px 4px 0 0;
+  background: #fafafa;
+}
+
+.quill-editor-container .ql-container {
+  border-bottom: 1px solid #e8e8e8;
+  border-left: 1px solid #e8e8e8;
+  border-right: 1px solid #e8e8e8;
+  border-radius: 0 0 4px 4px;
+  min-height: 200px;
+  font-size: 14px;
+}
+
+.quill-editor-container .ql-editor {
+  min-height: 200px;
+}
+
+.quill-editor-container .ql-editor.ql-blank::before {
+  color: #bbb;
+  font-style: normal;
+  content: "Enter detailed job description, requirements, responsibilities, and benefits...";
+}
+
+.quill-editor-container .ql-toolbar .ql-stroke {
+  stroke: #666;
+}
+
+.quill-editor-container .ql-toolbar .ql-fill {
+  fill: #666;
+}
+
+.quill-editor-container .ql-toolbar .ql-picker-label {
+  color: #666;
+}
+
+.quill-editor-container .ql-toolbar button:hover,
+.quill-editor-container .ql-toolbar .ql-picker-label:hover {
+  color: #2d5f3f;
+}
+
+.quill-editor-container .ql-toolbar button:hover .ql-stroke,
+.quill-editor-container .ql-toolbar .ql-picker-label:hover .ql-stroke {
+  stroke: #2d5f3f;
+}
+
+.quill-editor-container .ql-toolbar button:hover .ql-fill,
+.quill-editor-container .ql-toolbar .ql-picker-label:hover .ql-fill {
+  fill: #2d5f3f;
+}
+
+/* Form Actions */
+.form-actions {
+  margin-top: 32px;
+  margin-bottom: 0;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  min-width: 100px;
+}
+
+.submit-button {
+  background-color: #2d5f3f !important;
+  border-color: #2d5f3f !important;
+  min-width: 160px;
+}
+
+.submit-button:hover {
+  background-color: #1f4a2e !important;
+  border-color: #1f4a2e !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manage-careers-page {
+    padding: 16px;
+  }
+
+  .manageCareer-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .manageCareer-title {
+    font-size: 20px !important;
+  }
+
+  .create-btn {
+    width: 100%;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .career-modal {
+    width: 95% !important;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+
+  .quill-editor-container .ql-toolbar {
+    padding: 8px;
+  }
+
+  .quill-editor-container .ql-toolbar .ql-formats {
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .manage-careers-page {
+    padding: 12px;
+  }
+
+  .manageCareer-title {
+    font-size: 18px !important;
+  }
+
+  .careers-table .ant-table-thead > tr > th,
+  .careers-table .ant-table-tbody > tr > td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .job-title-cell {
+    align-items: flex-start;
+  }
+
+  .description-preview {
+    max-height: 60px;
+    overflow: hidden;
+  }
+}

@@ -1,7 +1,7 @@
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "../app/(general)/contact/contact.css"; 
+@import "../app/(general)/career/Careers.css"; 
+@import "../app/(general)/about/about.css"; 
 
 * {
   box-sizing: border-box;
