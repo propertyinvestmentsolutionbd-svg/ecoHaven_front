@@ -9,8 +9,7 @@ import YouTubeSection from "@/components/Landing/Video";
 import StatsSection from "@/components/Landing/Stats";
 import Partners from "@/components/Landing/Partners";
 import RoyalStandard from "@/components/Landing/PhotoSlider";
-
-const { Title, Paragraph } = Typography;
+import GalleriesSection from "@/components/Landing/Gallery";
 
 export default function Employees() {
   return (
@@ -19,6 +18,8 @@ export default function Employees() {
       <RoyalStandard />
       <ReviewSection />
       <ServicesSection />
+      <GalleriesSection />
+
       <YouTubeSection />
       <StatsSection />
       <Partners />
