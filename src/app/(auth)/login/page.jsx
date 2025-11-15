@@ -6,6 +6,7 @@ import { Form, Input, Button, Card, Alert, Divider } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.css";
 import { useRouter } from "next/navigation";
+import { useUserLoginMutation } from "@/redux/api/userApi";
 
 const Login = () => {
   const [form] = Form.useForm();
@@ -13,7 +14,7 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [userLogin] = useUserLoginMutation();
   const onFinish = async (values) => {
     setLoading(true);
     setError("");
@@ -22,18 +23,24 @@ const Login = () => {
       console.log("Login attempt:", values);
 
       // Simulate API call
-      const response = (await new Promise())((resolve) =>
-        setTimeout(
-          () =>
-            resolve({
-              success: true,
-              requires2FA: Math.random() > 0.5,
-              tempToken: "temp-token-123",
-            }),
-          1500
-        )
-      );
-
+      const response = await userLogin({ values }).unwrap();
+      console.log({ response });
+      //   ((resolve) =>
+      //   setTimeout(
+      //     () =>
+      //       resolve({
+      //         success: true,
+      //         requires2FA: Math.random() > 0.5,
+      //         tempToken: "temp-token-123",
+      //       }),
+      //     1500
+      //   )
+      // );
+      if (res?.accessToken) {
+        router.push("/dashboard");
+        message.success("User logged in successfully!");
+        storeUserInfo({ accessToken: res?.accessToken });
+      }
       if (response.requires2FA) {
         router.push(`/login/verify-2fa?tempToken=${response.tempToken}`);
       } else {

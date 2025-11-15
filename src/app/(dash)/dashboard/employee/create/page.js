@@ -12,6 +12,8 @@ import {
   Card,
   Divider,
   Typography,
+  Switch,
+  Checkbox,
 } from "antd";
 import {
   EditOutlined,
@@ -25,6 +27,7 @@ import {
 } from "@ant-design/icons";
 import "./AddEmployee.css";
 import Image from "next/image";
+import { useUserCreateMutation } from "@/redux/api/userApi";
 
 const ManageEmployees = () => {
   const mockEmployees = [
@@ -65,6 +68,9 @@ const ManageEmployees = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [isAgent, setIsAgent] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [userCreate] = useUserCreateMutation();
 
   const columns = [
     {
@@ -218,6 +224,7 @@ const ManageEmployees = () => {
   });
 
   const handleSubmit = async (values) => {
+    console.log({ values });
     setLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -240,14 +247,28 @@ const ManageEmployees = () => {
         message.success("Employee updated successfully");
       } else {
         const newEmployee = {
-          id: employees.length + 1,
-          ...values,
+          name: values.name,
+          email: values.email,
+          password: values.password, // Make sure to hash this in production
+          role: values.role || "employee",
+          contactNo: values.contactNo,
           profileImg:
             fileList.length > 0
               ? URL.createObjectURL(fileList[0].originFileObj)
               : null,
+          address: values.address || null,
+          linkedinUrl: values.linkedinUrl || null,
+          isActive: true,
+          isFeatured: isFeatured,
+          profileDescription: values.profileDescription || null,
+          isAgent: isAgent,
+          agentDescription: values.agentDescription || null,
+          twofaEnabled: true,
+          twoFactorCode: null,
+          twoFactorExpires: null,
         };
-        setEmployees([...employees, newEmployee]);
+        const res = await userCreate({ ...newEmployee });
+        // setEmployees([...employees, newEmployee]);
         message.success("Employee created successfully");
       }
       handleModalClose();
@@ -266,7 +287,10 @@ const ManageEmployees = () => {
     accept: "image/*",
     maxCount: 1,
   };
-
+  const handleMediaTypeChange = (checked) => {
+    setIsAgent(checked?.target?.checked);
+    form.setFieldsValue({ agentDescription: "" });
+  };
   return (
     <div className="manage-employees-page">
       <div className="employees-header">
@@ -388,6 +412,53 @@ const ManageEmployees = () => {
               />
             </Form.Item>
           </div>
+          <div className="form-row">
+            <Form.Item
+              name="designation"
+              label="Designation"
+              rules={[
+                { required: true, message: "Please select a designation!" },
+              ]}
+              initialValue=""
+              className="form-item-half"
+            >
+              <Select
+                options={[
+                  { value: "HR", label: "HR" },
+                  { value: "CEO", label: "CEO" },
+                ]}
+                placeholder="Select Designation"
+              />
+            </Form.Item>
+            <Form.Item
+              name="isAgent"
+              label="Is Agent"
+              valuePropName="checked"
+              initialValue={false}
+              layout="horizontal"
+              style={{
+                marginTop: "2rem",
+              }}
+            >
+              <Checkbox checked={isAgent} onChange={handleMediaTypeChange} />
+            </Form.Item>
+            <Form.Item
+              name="isFeatured"
+              label="Is Featured"
+              valuePropName="checked"
+              initialValue={false}
+              layout="horizontal"
+              style={{
+                marginTop: "2rem",
+              }}
+            >
+              <Checkbox
+                onChange={() => {
+                  setIsFeatured(!isFeatured);
+                }}
+              />
+            </Form.Item>
+          </div>
 
           {/* Address */}
           <Divider orientation="left" className="section-divider">
@@ -411,6 +482,49 @@ const ManageEmployees = () => {
               maxLength={255}
             />
           </Form.Item>
+          {/* BIO */}
+          <Divider orientation="left" className="section-divider">
+            Bio
+          </Divider>
+
+          <Form.Item
+            name="profileDescription"
+            label="Bio"
+            rules={[
+              {
+                min: 5,
+                message: "Bio should be at least 5 characters!",
+              },
+            ]}
+          >
+            <Input.TextArea rows={2} placeholder="" showCount maxLength={255} />
+          </Form.Item>
+          {/* Agent */}
+          {isAgent && (
+            <Divider orientation="left" className="section-divider">
+              Agent
+            </Divider>
+          )}
+
+          {isAgent && (
+            <Form.Item
+              name="agentDescription"
+              label="Agent Bio"
+              rules={[
+                {
+                  min: 5,
+                  message: "Agent Bio should be at least 5 characters!",
+                },
+              ]}
+            >
+              <Input.TextArea
+                rows={2}
+                placeholder=""
+                showCount
+                maxLength={255}
+              />
+            </Form.Item>
+          )}
 
           {/* Profile Image */}
           <Divider orientation="left" className="section-divider">
