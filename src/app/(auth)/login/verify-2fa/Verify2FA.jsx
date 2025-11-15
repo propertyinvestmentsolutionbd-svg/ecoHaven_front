@@ -57,7 +57,10 @@ const Verify2FA = () => {
 
       // For demo, accept any 6-digit code
       if (response?.statusCode === 200) {
-        storeUserInfo({ accessToken: response?.token });
+        storeUserInfo({
+          accessToken: response?.token,
+          menus: JSON.stringify(response?.menus?.permissions),
+        });
         router.push("/dashboard");
       }
       if (response?.statusCode !== 200) {
