@@ -3,6 +3,7 @@ import "./globals.css";
 import { ConfigProvider } from "antd";
 import StyledComponentsRegistry from "@/lib/registry";
 import Providers from "@/lib/Providers";
+import ToastProvider from "@/components/common/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,10 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={inter.className}>
           <ConfigProvider theme={{ hashed: false }}>
-            <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+            <StyledComponentsRegistry>
+              {children}
+              <ToastProvider />
+            </StyledComponentsRegistry>
           </ConfigProvider>
         </body>
       </html>

@@ -11,9 +11,17 @@ const userApi = baseApi.injectEndpoints({
     }),
     userLogin: build.mutation({
       query: (loginData) => ({
-        url: `auth/signin`,
+        url: `/auth/signin`,
         method: "POST",
         data: loginData,
+      }),
+      invalidatesTags: ["user"],
+    }),
+    userVerification: build.mutation({
+      query: (payload) => ({
+        url: `/auth/verify-2fa`,
+        method: "POST",
+        data: payload,
       }),
       invalidatesTags: ["user"],
     }),
@@ -21,4 +29,8 @@ const userApi = baseApi.injectEndpoints({
   //   overrideExisting: false,
 });
 
-export const { useUserCreateMutation, useUserLoginMutation } = userApi;
+export const {
+  useUserCreateMutation,
+  useUserLoginMutation,
+  useUserVerificationMutation,
+} = userApi;

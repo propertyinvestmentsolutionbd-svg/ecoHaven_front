@@ -1,6 +1,4 @@
 import axios from "axios";
-
-// import { instance as axiosInstance } from "./axiosInstance";
 export const axiosBaseQuery =
   ({ baseUrl } = { baseUrl: "" }) =>
   async ({ url, method, data, params, contentType }) => {
@@ -15,7 +13,12 @@ export const axiosBaseQuery =
         },
         withCredentials: true,
       });
-      return result;
+      return {
+        data: result.data,
+        meta: {
+          response: result,
+        },
+      };
     } catch (axiosError) {
       let err = axiosError;
       return {

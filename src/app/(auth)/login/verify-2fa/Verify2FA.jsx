@@ -5,9 +5,10 @@ import {
   SafetyCertificateOutlined,
   MailOutlined,
   ClockCircleOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUserVerificationMutation } from "@/redux/api/userApi";
+import { getUserInfo, storeUserInfo } from "@/utils/helper";
 
 const Verify2FA = () => {
   const [form] = Form.useForm();
@@ -17,8 +18,10 @@ const Verify2FA = () => {
   const [error, setError] = useState("");
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const [codeSent, setCodeSent] = useState(false);
-
+  const [userVerification] = useUserVerificationMutation();
   const tempToken = searchParams.get("tempToken");
+  const data = getUserInfo();
+  console.log({ data });
 
   useEffect(() => {
     if (!tempToken) {
@@ -46,17 +49,22 @@ const Verify2FA = () => {
 
     try {
       console.log("Verifying 2FA code:", values);
-
-      // Simulate API verification
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await userVerification({
+        ...values,
+        tempToken,
+      }).unwrap();
+      console.log({ response });
 
       // For demo, accept any 6-digit code
-      if (values.code.length === 6) {
-        navigate("/dashboard");
-      } else {
-        throw new Error("Invalid code");
+      if (response?.statusCode === 200) {
+        storeUserInfo({ accessToken: response?.token });
+        router.push("/dashboard");
+      }
+      if (response?.statusCode !== 200) {
+        toast.error("Something went Wrong");
       }
     } catch (err) {
+      console.log({ err });
       setError("Invalid verification code. Please try again.");
     } finally {
       setLoading(false);
@@ -190,7 +198,7 @@ const Verify2FA = () => {
         <div className="back-to-login">
           <Button
             type="link"
-            onClick={() => navigate("/login")}
+            onClick={() => router.push("/login")}
             className="back-link"
           >
             Back to login

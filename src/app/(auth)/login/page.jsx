@@ -1,12 +1,13 @@
-// src/app/login/page.js
 "use client";
 
 import { useState } from "react";
-import { Form, Input, Button, Card, Alert, Divider } from "antd";
+import { Form, Input, Button, Alert } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.css";
 import { useRouter } from "next/navigation";
 import { useUserLoginMutation } from "@/redux/api/userApi";
+import { toast } from "react-toastify";
+import { getUserInfo, storeUserInfo } from "@/utils/helper";
 
 const Login = () => {
   const [form] = Form.useForm();
@@ -15,6 +16,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userLogin] = useUserLoginMutation();
+  const data = getUserInfo();
+  console.log({ data });
   const onFinish = async (values) => {
     setLoading(true);
     setError("");
@@ -23,7 +26,7 @@ const Login = () => {
       console.log("Login attempt:", values);
 
       // Simulate API call
-      const response = await userLogin({ values }).unwrap();
+      const response = await userLogin(values).unwrap();
       console.log({ response });
       //   ((resolve) =>
       //   setTimeout(
@@ -36,15 +39,13 @@ const Login = () => {
       //     1500
       //   )
       // );
-      if (res?.accessToken) {
+      if (response?.accessToken) {
+        toast.success("User logged in successfully!");
         router.push("/dashboard");
-        message.success("User logged in successfully!");
-        storeUserInfo({ accessToken: res?.accessToken });
+        storeUserInfo({ accessToken: response?.accessToken });
       }
-      if (response.requires2FA) {
+      if (response.twoFa) {
         router.push(`/login/verify-2fa?tempToken=${response.tempToken}`);
-      } else {
-        router.push("/dashboard");
       }
     } catch (err) {
       setError("Invalid email or password. Please try again.");
