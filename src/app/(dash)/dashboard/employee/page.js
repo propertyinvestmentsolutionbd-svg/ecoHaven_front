@@ -8,7 +8,6 @@ import {
   Input,
   Select,
   Upload,
-  message,
   Card,
   Divider,
   Typography,
@@ -28,6 +27,7 @@ import {
 import "./AddEmployee.css";
 import Image from "next/image";
 import { useUserCreateMutation } from "@/redux/api/userApi";
+import { toast } from "react-toastify";
 
 const ManageEmployees = () => {
   const mockEmployees = [
@@ -224,56 +224,105 @@ const ManageEmployees = () => {
   });
 
   const handleSubmit = async (values) => {
-    console.log({ values });
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const formData = new FormData();
 
-      if (editingEmployee) {
-        setEmployees(
-          employees.map((employee) =>
-            employee.id === editingEmployee.id
-              ? {
-                  ...employee,
-                  ...values,
-                  profileImg:
-                    fileList.length > 0
-                      ? URL.createObjectURL(fileList[0].originFileObj)
-                      : employee.profileImg,
-                }
-              : employee
-          )
-        );
-        message.success("Employee updated successfully");
-      } else {
-        const newEmployee = {
-          name: values.name,
-          email: values.email,
-          password: values.password, // Make sure to hash this in production
-          role: values.role || "employee",
-          contactNo: values.contactNo,
-          profileImg:
-            fileList.length > 0
-              ? URL.createObjectURL(fileList[0].originFileObj)
-              : null,
-          address: values.address || null,
-          linkedinUrl: values.linkedinUrl || null,
-          isActive: true,
-          isFeatured: isFeatured,
-          profileDescription: values.profileDescription || null,
-          isAgent: isAgent,
-          agentDescription: values.agentDescription || null,
-          twofaEnabled: true,
-          twoFactorCode: null,
-          twoFactorExpires: null,
-        };
-        const res = await userCreate({ ...newEmployee });
-        // setEmployees([...employees, newEmployee]);
-        message.success("Employee created successfully");
+      // Append individual fields
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("contactNo", values.contactNo);
+      formData.append("role", values.role || "employee");
+      formData.append("designation", values.designation || "");
+      formData.append("address", values.address || "");
+      formData.append("linkedinUrl", values.linkedinUrl || "");
+      formData.append("profileDescription", values.profileDescription || "");
+      formData.append("agentDescription", values.agentDescription || "");
+      formData.append("isFeatured", isFeatured.toString());
+      formData.append("isAgent", isAgent.toString());
+      formData.append("isActive", "true");
+      formData.append("twofaEnabled", "true");
+
+      if (!editingEmployee && values.password) {
+        formData.append("password", values.password);
       }
-      handleModalClose();
+
+      // DEBUG: Check the file object
+      console.log("FileList[0]:", fileList[0]);
+      console.log("Is File instance?", fileList[0] instanceof File);
+      console.log("File object keys:", Object.keys(fileList[0]));
+
+      // Handle file upload properly
+      if (fileList.length > 0) {
+        let fileToSend = fileList[0];
+
+        // If it's not a File instance, we need to convert it
+        if (!(fileToSend instanceof File)) {
+          console.log("File is not a File instance, converting...");
+
+          // Method 1: If it has originFileObj, use that
+          if (fileToSend.originFileObj) {
+            fileToSend = fileToSend.originFileObj;
+            console.log("Using originFileObj:", fileToSend);
+          }
+          // Method 2: If it has thumbUrl, fetch and convert
+          else if (fileToSend.thumbUrl) {
+            console.log("Converting from thumbUrl...");
+            const response = await fetch(fileToSend.thumbUrl);
+            const blob = await response.blob();
+            fileToSend = new File([blob], fileToSend.name, { type: blob.type });
+          }
+          // Method 3: If it's the Ant Design file object with uid, etc.
+          else if (fileToSend.uid && fileToSend.name) {
+            console.log("Ant Design file object detected, but no file content");
+            // We need to get the actual file content
+          }
+        }
+
+        // Only append if it's a proper File
+        if (fileToSend instanceof File) {
+          formData.append("profileImg", fileToSend);
+          console.log(
+            "Appended file:",
+            fileToSend.name,
+            fileToSend.size,
+            "bytes"
+          );
+        } else {
+          toast.warn("Cannot append file - not a File instance:", fileToSend);
+        }
+      }
+
+      // Debug: Log ALL FormData entries
+      console.log("=== FORM DATA ENTRIES ===");
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(
+            `${key}: File - ${value.name} (${value.size} bytes, ${value.type})`
+          );
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+
+      // Use fetch
+      const response = await fetch("http://localhost:5000/api/v1/auth/signup", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success("Employee created successfully");
+        handleModalClose();
+      } else {
+        throw new Error(result.message || "Request failed");
+      }
     } catch (error) {
-      message.error("Failed to save employee. Please try again.");
+      toast.error("Error creating employee:", error);
+      toast.error("Failed to save employee. Please try again.");
     } finally {
       setLoading(false);
     }

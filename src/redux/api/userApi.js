@@ -2,13 +2,21 @@ import { baseApi } from "./baseApi";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    userCreate: build.mutation({
-      query: (payload) => ({
-        url: "/auth/signup",
-        method: "POST",
-        data: payload,
-      }),
-    }),
+    // userCreate: build.mutation({
+    //   query: (formData) => {
+    //     console.log("RTK Query - Received formData:", formData);
+    //     console.log("RTK Query - Is FormData?", formData instanceof FormData);
+    //     return {
+    //       url: "/auth/signup",
+    //       method: "POST",
+    //       body: formData,
+    //       // formData: true,
+    //       // headers: {
+    //       //   "Content-Type": "multipart/form-data;",
+    //       // },
+    //     };
+    //   },
+    // }),
     userLogin: build.mutation({
       query: (loginData) => ({
         url: `/auth/signin`,
@@ -25,6 +33,22 @@ const userApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    userProfile: build.query({
+      query: (id) => {
+        return {
+          url: `/profile/${id}`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+      // transformResponse: (response: IService[], meta: IMeta) => {
+      //   return {
+      //     services: response,
+      //     meta,
+      //   };
+      // },
+      providesTags: ["service"],
+    }),
   }),
   //   overrideExisting: false,
 });
@@ -33,4 +57,5 @@ export const {
   useUserCreateMutation,
   useUserLoginMutation,
   useUserVerificationMutation,
+  useUserProfileQuery,
 } = userApi;

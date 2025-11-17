@@ -35,7 +35,7 @@
 
 /* Avatar Section */
 .profile-avatar-section {
-  text-align: center;
+  text-align: center ;
   margin-bottom: 1.5rem;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .edit-button {
-  background: hsl(var(--primary));
+  background: #155724;
   border-color: hsl(var(--primary));
   border-radius: 0.5rem;
   height: 40px;
@@ -165,7 +165,7 @@
 }
 
 .save-button {
-  background: hsl(var(--primary));
+  background: #155724;
   border-color: hsl(var(--primary));
   border-radius: 0.5rem;
   height: 44px;
@@ -176,7 +176,123 @@
   background: hsl(var(--primary) / 0.9);
   border-color: hsl(var(--primary) / 0.9);
 }
+/* Add these styles to your existing profile.css */
 
+.profile-image-container {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  margin:0 auto;
+}
+
+.profile-image {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-status-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.status-badge.featured {
+  background-color: #fff7e6;
+  border: 1px solid #ffd591;
+  color: #fa8c16;
+}
+
+.status-badge.agent {
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+  color: #1890ff;
+}
+
+.linkedin-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.linkedin-link:hover {
+  text-decoration: underline;
+}
+
+.description-text {
+  line-height: 1.6;
+  color: #666;
+}
+
+.profile-status-flags {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.status-flag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-active {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: #ff4d4f;
+  font-weight: 500;
+}
+
+.status-featured {
+  color: #fa8c16;
+  font-weight: 500;
+}
+
+.status-not-featured {
+  color: #666;
+}
+
+.status-agent {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.status-not-agent {
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-status-flags {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .profile-status-badges {
+    justify-content: flex-start;
+  }
+}
 /* Animations */
 @keyframes fadeIn {
   from {
