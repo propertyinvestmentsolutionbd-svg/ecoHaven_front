@@ -13,6 +13,8 @@ import {
   Switch,
   Checkbox,
   Spin,
+  Upload,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -27,21 +29,27 @@ import {
   TeamOutlined,
   CheckCircleOutlined,
   StarOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import Image from "next/image";
 import "./profile.css";
-import { useUserProfileQuery } from "@/redux/api/userApi";
 import { getUserInfo } from "@/utils/helper";
+import { useUserProfileQuery } from "@/redux/api/userApi";
 
 const Profile = () => {
   const [form] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [removeProfileImage, setRemoveProfileImage] = useState(false);
 
   const { userId } = getUserInfo();
+
+  // Fetch user profile data
   const { data, isLoading } = useUserProfileQuery(userId);
 
   const userProfile = data?.data;
+  // Initial data fetch
 
   const handleEdit = () => {
     if (userProfile) {
@@ -58,30 +66,97 @@ const Profile = () => {
         isFeatured: userProfile.isFeatured,
         isAgent: userProfile.isAgent,
       });
+
+      // Set current profile image if exists
+      if (userProfile.profileImg) {
+        setFileList([
+          {
+            uid: "-1",
+            name: "current-profile.jpg",
+            status: "done",
+            url: `http://localhost:5000${userProfile.profileImg}`,
+          },
+        ]);
+      }
+
       setIsEditing(true);
     }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    setFileList([]);
+    setRemoveProfileImage(false);
     form.resetFields();
   };
 
   const handleSave = async (values) => {
     setLoading(true);
     try {
-      // TODO: Replace with actual API call to update user
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // setUserProfile(values); // You'll update this with your actual update mutation
-      setIsEditing(false);
-      console.log("Profile updated:", values);
-      // Add your update API call here
-      // const res = await updateUserProfile(values).unwrap();
+      const formData = new FormData();
+
+      // Prepare user data
+      const userData = {
+        ...values,
+        removeProfileImage: removeProfileImage && fileList.length === 0,
+      };
+
+      // Append userData as JSON
+      formData.append("userData", JSON.stringify(userData));
+
+      // Append new file if selected
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append("profileImg", fileList[0].originFileObj);
+      }
+
+      // Call update API with fetch
+      const response = await fetch(
+        `http://localhost:5000/api/v1/${userId}/with-image`,
+        {
+          method: "PUT",
+          body: formData,
+          credentials: "include",
+          // Don't set Content-Type - let browser set it automatically for FormData
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update profile");
+      }
+
+      if (result.success) {
+        message.success("Profile updated successfully");
+        setIsEditing(false);
+        setFileList([]);
+        setRemoveProfileImage(false);
+
+        // Update local state with new data
+        setUserProfile(result.data);
+      } else {
+        throw new Error(result.message || "Failed to update profile");
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
+      message.error(
+        error.message || "Failed to update profile. Please try again."
+      );
     } finally {
       setLoading(false);
     }
+  };
+
+  const uploadProps = {
+    fileList,
+    onChange: ({ fileList: newFileList }) => setFileList(newFileList),
+    beforeUpload: () => false,
+    listType: "picture-card",
+    accept: "image/*",
+    maxCount: 1,
+    onRemove: () => {
+      setRemoveProfileImage(true);
+    },
   };
 
   // Show loading state
@@ -131,6 +206,10 @@ const Profile = () => {
                   width={100}
                   height={100}
                   className="profile-image"
+                  style={{
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
                 />
               </div>
             ) : (
@@ -168,17 +247,43 @@ const Profile = () => {
           </div>
 
           <Divider />
+
+          {/* EDIT BUTTON - Always visible */}
           <div className="profile-edit-header">
             <Typography.Title level={5}>Personal Information</Typography.Title>
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={handleEdit}
-              className="edit-button"
-            >
-              Edit Profile
-            </Button>
+            {!isEditing ? (
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={handleEdit}
+                className="edit-button"
+              >
+                Edit Profile
+              </Button>
+            ) : (
+              <div className="profile-form-actions">
+                <Button
+                  icon={<CloseOutlined />}
+                  onClick={handleCancel}
+                  size="large"
+                  className="cancel-button"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => form.submit()}
+                  icon={<SaveOutlined />}
+                  loading={loading}
+                  size="large"
+                  className="save-button"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            )}
           </div>
+
           {!isEditing ? (
             // View Mode
             <div className="profile-view-mode">
@@ -392,16 +497,46 @@ const Profile = () => {
           ) : (
             // Edit Mode
             <div className="profile-edit-mode">
-              <div className="profile-edit-header">
-                <Typography.Title level={5}>Edit Information</Typography.Title>
-              </div>
-
               <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSave}
                 size="large"
               >
+                {/* Profile Image Upload in Edit Mode */}
+                <Form.Item label="Profile Image">
+                  <Upload {...uploadProps}>
+                    {fileList.length >= 1 ? null : (
+                      <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>
+                          {userProfile?.profileImg
+                            ? "Change Photo"
+                            : "Upload Photo"}
+                        </div>
+                      </div>
+                    )}
+                  </Upload>
+                  {userProfile?.profileImg &&
+                    fileList.length === 0 &&
+                    !removeProfileImage && (
+                      <Typography.Text
+                        type="secondary"
+                        style={{ display: "block", marginTop: 8 }}
+                      >
+                        Current photo will be kept
+                      </Typography.Text>
+                    )}
+                  {removeProfileImage && (
+                    <Typography.Text
+                      type="warning"
+                      style={{ display: "block", marginTop: 8 }}
+                    >
+                      Photo will be removed
+                    </Typography.Text>
+                  )}
+                </Form.Item>
+
                 <Row gutter={16}>
                   <Col xs={24} sm={12}>
                     <Form.Item
@@ -548,27 +683,6 @@ const Profile = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-
-                <div className="profile-form-actions">
-                  <Button
-                    icon={<CloseOutlined />}
-                    onClick={handleCancel}
-                    size="large"
-                    className="cancel-button"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    icon={<SaveOutlined />}
-                    loading={loading}
-                    size="large"
-                    className="save-button"
-                  >
-                    {loading ? "Saving..." : "Save Changes"}
-                  </Button>
-                </div>
               </Form>
             </div>
           )}
