@@ -70,7 +70,7 @@ const ManageEmployees = () => {
   const [fileList, setFileList] = useState([]);
   const [isAgent, setIsAgent] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
-  const [userCreate] = useUserCreateMutation();
+  // const [userCreate] = useUserCreateMutation();
 
   const columns = [
     {
@@ -250,7 +250,7 @@ const ManageEmployees = () => {
       // DEBUG: Check the file object
       console.log("FileList[0]:", fileList[0]);
       console.log("Is File instance?", fileList[0] instanceof File);
-      console.log("File object keys:", Object.keys(fileList[0]));
+      // console.log("File object keys:", Object.keys(fileList[0]));
 
       // Handle file upload properly
       if (fileList.length > 0) {
@@ -321,7 +321,7 @@ const ManageEmployees = () => {
         throw new Error(result.message || "Request failed");
       }
     } catch (error) {
-      toast.error("Error creating employee:", error);
+      console.log("Error creating employee:", { error });
       toast.error("Failed to save employee. Please try again.");
     } finally {
       setLoading(false);

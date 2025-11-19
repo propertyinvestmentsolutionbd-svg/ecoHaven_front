@@ -15,6 +15,7 @@ import {
   Spin,
   Upload,
   message,
+  Select,
 } from "antd";
 import {
   UserOutlined,
@@ -30,11 +31,17 @@ import {
   CheckCircleOutlined,
   StarOutlined,
   PlusOutlined,
+  CrownOutlined,
 } from "@ant-design/icons";
 import Image from "next/image";
 import "./profile.css";
 import { getUserInfo } from "@/utils/helper";
 import { useUserProfileQuery } from "@/redux/api/userApi";
+import { toast } from "react-toastify";
+
+const { Title, Text } = Typography;
+const { TextArea } = Input;
+const { Option } = Select;
 
 const Profile = () => {
   const [form] = Form.useForm();
@@ -49,7 +56,44 @@ const Profile = () => {
   const { data, isLoading } = useUserProfileQuery(userId);
 
   const userProfile = data?.data;
-  // Initial data fetch
+
+  // Country options
+  const countryOptions = [
+    { value: "United States", label: "United States" },
+    { value: "Canada", label: "Canada" },
+    { value: "United Kingdom", label: "United Kingdom" },
+    { value: "Australia", label: "Australia" },
+    { value: "Germany", label: "Germany" },
+    { value: "France", label: "France" },
+    { value: "Japan", label: "Japan" },
+    { value: "South Korea", label: "South Korea" },
+    { value: "India", label: "India" },
+    { value: "Bangladesh", label: "Bangladesh" },
+    { value: "Singapore", label: "Singapore" },
+    { value: "United Arab Emirates", label: "United Arab Emirates" },
+  ];
+
+  // Designation options
+  const designationOptions = [
+    { value: "CEO", label: "Chief Executive Officer (CEO)" },
+    { value: "CTO", label: "Chief Technology Officer (CTO)" },
+    { value: "CFO", label: "Chief Financial Officer (CFO)" },
+    { value: "COO", label: "Chief Operating Officer (COO)" },
+    { value: "Manager", label: "Manager" },
+    { value: "Team Lead", label: "Team Lead" },
+    { value: "Senior Developer", label: "Senior Developer" },
+    { value: "Developer", label: "Developer" },
+    { value: "Designer", label: "Designer" },
+    { value: "Marketing Specialist", label: "Marketing Specialist" },
+    { value: "Sales Executive", label: "Sales Executive" },
+    { value: "HR Manager", label: "HR Manager" },
+    { value: "Project Manager", label: "Project Manager" },
+    { value: "Data Analyst", label: "Data Analyst" },
+    { value: "DevOps Engineer", label: "DevOps Engineer" },
+    { value: "QA Engineer", label: "QA Engineer" },
+    { value: "Product Manager", label: "Product Manager" },
+    { value: "Business Analyst", label: "Business Analyst" },
+  ];
 
   const handleEdit = () => {
     if (userProfile) {
@@ -59,12 +103,14 @@ const Profile = () => {
         contactNo: userProfile.contactNo,
         address: userProfile.address,
         country: userProfile.country || "",
+        designation: userProfile.designation || "",
         linkedinUrl: userProfile.linkedinUrl || "",
         profileDescription: userProfile.profileDescription || "",
         agentDescription: userProfile.agentDescription || "",
         isActive: userProfile.isActive,
         isFeatured: userProfile.isFeatured,
         isAgent: userProfile.isAgent,
+        twofaEnabled: userProfile.twofaEnabled,
       });
 
       // Set current profile image if exists
@@ -116,30 +162,29 @@ const Profile = () => {
           method: "PUT",
           body: formData,
           credentials: "include",
-          // Don't set Content-Type - let browser set it automatically for FormData
         }
       );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Failed to update profile");
+        toast.error(result.message || "Failed to update profile");
       }
 
       if (result.success) {
-        message.success("Profile updated successfully");
+        toast.success("Profile updated successfully");
         setIsEditing(false);
         setFileList([]);
         setRemoveProfileImage(false);
 
-        // Update local state with new data
-        setUserProfile(result.data);
+        // Refetch data to get updated information
+        window.location.reload(); // Simple refresh to get updated data
       } else {
         throw new Error(result.message || "Failed to update profile");
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
-      message.error(
+      console.log("Error updating profile:", { error });
+      toast.error(
         error.message || "Failed to update profile. Please try again."
       );
     } finally {
@@ -225,6 +270,13 @@ const Profile = () => {
             <Typography.Text className="profile-email-badge">
               {userProfile.email}
             </Typography.Text>
+
+            {/* Designation Badge */}
+            {userProfile.designation && (
+              <div className="designation-badge">
+                <CrownOutlined /> {userProfile.designation}
+              </div>
+            )}
 
             {/* Status Badges */}
             <div className="profile-status-badges">
@@ -325,6 +377,20 @@ const Profile = () => {
                       </Typography.Text>
                       <div className="profile-info-value">
                         {userProfile.contactNo}
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col xs={24} sm={12}>
+                  <div className="profile-info-item">
+                    <CrownOutlined className="profile-info-icon" />
+                    <div>
+                      <Typography.Text className="profile-info-label">
+                        Designation
+                      </Typography.Text>
+                      <div className="profile-info-value">
+                        {userProfile.designation || "Not provided"}
                       </div>
                     </div>
                   </div>
@@ -591,6 +657,28 @@ const Profile = () => {
                   </Col>
 
                   <Col xs={24} sm={12}>
+                    <Form.Item label="Designation" name="designation">
+                      <Select
+                        placeholder="Select your designation"
+                        allowClear
+                        showSearch
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                      >
+                        {designationOptions.map((option) => (
+                          <Option key={option.value} value={option.value}>
+                            {option.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+
+                  <Col xs={24} sm={12}>
                     <Form.Item label="Address" name="address">
                       <Input
                         placeholder="Enter your address"
@@ -601,7 +689,23 @@ const Profile = () => {
 
                   <Col xs={24} sm={12}>
                     <Form.Item label="Country" name="country">
-                      <Input placeholder="Enter your country" />
+                      <Select
+                        placeholder="Select your country"
+                        allowClear
+                        showSearch
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                      >
+                        {countryOptions.map((option) => (
+                          <Option key={option.value} value={option.value}>
+                            {option.label}
+                          </Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
 
@@ -622,32 +726,45 @@ const Profile = () => {
                       />
                     </Form.Item>
                   </Col>
-
+                  <Col xs={0} sm={12}></Col>
                   {/* Boolean Fields */}
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={6}>
                     <Form.Item
                       label="Active Status"
                       name="isActive"
+                      layout="horizontal"
                       valuePropName="checked"
                     >
                       <Switch />
                     </Form.Item>
                   </Col>
 
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={6}>
                     <Form.Item
                       label="Featured"
                       name="isFeatured"
+                      layout="horizontal"
                       valuePropName="checked"
                     >
                       <Switch />
                     </Form.Item>
                   </Col>
 
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={6}>
                     <Form.Item
+                      layout="horizontal"
                       label="Is Agent"
                       name="isAgent"
+                      valuePropName="checked"
+                    >
+                      <Switch />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={6}>
+                    <Form.Item
+                      layout="horizontal"
+                      label="Enable 2FA"
+                      name="twofaEnabled"
                       valuePropName="checked"
                     >
                       <Switch />

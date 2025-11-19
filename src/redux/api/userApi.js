@@ -2,21 +2,17 @@ import { baseApi } from "./baseApi";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    // userCreate: build.mutation({
-    //   query: (formData) => {
-    //     console.log("RTK Query - Received formData:", formData);
-    //     console.log("RTK Query - Is FormData?", formData instanceof FormData);
-    //     return {
-    //       url: "/auth/signup",
-    //       method: "POST",
-    //       body: formData,
-    //       // formData: true,
-    //       // headers: {
-    //       //   "Content-Type": "multipart/form-data;",
-    //       // },
-    //     };
-    //   },
-    // }),
+    userPassChange: build.mutation({
+      query: (payload) => ({
+        url: `/${payload.id}/change-password`,
+        method: "patch",
+        data: payload,
+        formData: true,
+        // headers: {
+        //   "Content-Type": "multipart/form-data;",
+        // },
+      }),
+    }),
     userLogin: build.mutation({
       query: (loginData) => ({
         url: `/auth/signin`,
@@ -58,4 +54,5 @@ export const {
   useUserLoginMutation,
   useUserVerificationMutation,
   useUserProfileQuery,
+  useUserPassChangeMutation,
 } = userApi;

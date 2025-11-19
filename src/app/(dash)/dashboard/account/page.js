@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -10,6 +10,7 @@ import {
   Col,
   Divider,
   Switch,
+  Spin,
 } from "antd";
 import {
   MailOutlined,
@@ -19,32 +20,55 @@ import {
   CloseOutlined,
   SafetyCertificateOutlined,
   EyeInvisibleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import "./Account.css";
-
-const { Title, Text } = Typography;
+import { getUserInfo } from "@/utils/helper";
+import {
+  useUserProfileQuery,
+  useUserPassChangeMutation,
+} from "@/redux/api/userApi";
+import { toast } from "react-toastify";
 
 const Account = () => {
   const [form] = Form.useForm();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Mock account data
-  const [accountData, setAccountData] = useState({
-    email: "john.doe@company.com",
-    password: "********",
-    twoFactorEnabled: true,
-  });
+  const { userId } = getUserInfo();
+
+  // Fetch user profile data
+  const { data, isLoading, refetch } = useUserProfileQuery(userId);
+  // Password change mutation
+  const [userPassChange] = useUserPassChangeMutation();
+
+  const userProfile = data?.data;
+
+  // Reset form when userProfile changes and we're in edit mode
+  useEffect(() => {
+    if (isEditing && userProfile) {
+      form.setFieldsValue({
+        email: userProfile.email,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+        twofaEnabled: userProfile.twofaEnabled || false,
+      });
+    }
+  }, [userProfile, isEditing, form]);
 
   const handleEdit = () => {
-    form.setFieldsValue({
-      email: accountData.email,
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-      twoFactorEnabled: accountData.twoFactorEnabled,
-    });
-    setIsEditing(true);
+    if (userProfile) {
+      form.setFieldsValue({
+        email: userProfile.email,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+        twofaEnabled: userProfile.twofaEnabled || false,
+      });
+      setIsEditing(true);
+    }
   };
 
   const handleCancel = () => {
@@ -55,61 +79,119 @@ const Account = () => {
   const handleSave = async (values) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (values.newPassword) {
+        const passwordPayload = {
+          id: userId,
+          currentPassword: values.currentPassword,
+          newPassword: values.newPassword,
+          confirmPassword: values.confirmPassword,
+        };
 
-      const updatedData = {
-        email: values.email,
-        password: values.newPassword ? "********" : accountData.password,
-        twoFactorEnabled: values.twoFactorEnabled,
-      };
-
-      setAccountData(updatedData);
-      setIsEditing(false);
-      console.log("Account updated:", values);
+        const res = await userPassChange(passwordPayload).unwrap();
+        console.log({ res });
+        if (res.success) {
+          toast.success(res.message || "Password changed successfully");
+          setIsEditing(false);
+        }
+      }
     } catch (error) {
-      console.error("Error updating account:", error);
+      console.log("Error updating account:", { error });
+      toast.error(
+        error.message || "Failed to update account. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="account-container">
+        <div className="account-content">
+          <Card className="account-card">
+            <div style={{ textAlign: "center", padding: "50px" }}>
+              <Spin size="large" />
+              <div style={{ marginTop: "16px" }}>Loading account...</div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if no data
+  if (!userProfile) {
+    return (
+      <div className="account-container">
+        <div className="account-content">
+          <Card className="account-card">
+            <div style={{ textAlign: "center", padding: "50px" }}>
+              <Typography.Text type="danger">
+                Failed to load account data
+              </Typography.Text>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="account-container">
       <div className="account-content">
-        {/* <div className="account-header">
-          <Title level={2} className="account-title">
-            Account Security
-          </Title>
-          <Text className="account-subtitle">
-            Manage your login credentials and security settings
-          </Text>
-        </div> */}
-
         <Card className="account-card">
+          {/* EDIT BUTTON - Always visible */}
+          <div className="account-edit-header">
+            <Typography.Title level={5}>
+              Credential Information
+            </Typography.Title>
+            {!isEditing ? (
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={handleEdit}
+                className="edit-button"
+              >
+                Edit Credentials
+              </Button>
+            ) : (
+              <div className="account-form-actions">
+                <Button
+                  icon={<CloseOutlined />}
+                  onClick={handleCancel}
+                  size="large"
+                  className="cancel-button"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => form.submit()}
+                  icon={<SaveOutlined />}
+                  // loading={loading || isChangingPassword}
+                  size="large"
+                  className="save-button"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            )}
+          </div>
+
           {!isEditing ? (
             // View Mode
             <div className="account-view-mode">
-              <div className="account-edit-header">
-                <Title level={5}>Credential Information</Title>
-                <Button
-                  type="primary"
-                  icon={<EditOutlined />}
-                  onClick={handleEdit}
-                  className="edit-button"
-                >
-                  Edit Credentials
-                </Button>
-              </div>
-
               <Row gutter={[24, 24]} className="account-info-grid">
                 <Col xs={24} sm={12}>
                   <div className="account-info-item">
                     <MailOutlined className="account-info-icon" />
                     <div>
-                      <Text className="account-info-label">Email Address</Text>
+                      <Typography.Text className="account-info-label">
+                        Email Address
+                      </Typography.Text>
                       <div className="account-info-value">
-                        {accountData.email}
+                        {userProfile.email}
                       </div>
                     </div>
                   </div>
@@ -119,10 +201,12 @@ const Account = () => {
                   <div className="account-info-item">
                     <LockOutlined className="account-info-icon" />
                     <div>
-                      <Text className="account-info-label">Password</Text>
+                      <Typography.Text className="account-info-label">
+                        Password
+                      </Typography.Text>
                       <div className="account-info-value password-masked">
                         <EyeInvisibleOutlined className="password-icon" />
-                        {accountData.password}
+                        ••••••••
                       </div>
                     </div>
                   </div>
@@ -133,26 +217,57 @@ const Account = () => {
                     <SafetyCertificateOutlined className="account-info-icon" />
                     <div className="two-factor-info">
                       <div>
-                        <Text className="account-info-label">
+                        <Typography.Text className="account-info-label">
                           Two-Factor Authentication
-                        </Text>
+                        </Typography.Text>
                         <div className="account-info-value">
-                          {accountData.twoFactorEnabled ? (
-                            <span className="status-badge enabled">
-                              Enabled
-                            </span>
+                          {userProfile.twofaEnabled ? (
+                            <div className="status-badge enabled">
+                              <CheckCircleOutlined /> Enabled
+                            </div>
                           ) : (
-                            <span className="status-badge disabled">
-                              Disabled
-                            </span>
+                            <div className="status-badge disabled">
+                              <CloseCircleOutlined /> Disabled
+                            </div>
                           )}
                         </div>
                       </div>
-                      <Text className="two-factor-description">
-                        {accountData.twoFactorEnabled
+                      <Typography.Text className="two-factor-description">
+                        {userProfile.twofaEnabled
                           ? "Your account is protected with two-factor authentication"
                           : "Enable 2FA for enhanced security protection"}
-                      </Text>
+                      </Typography.Text>
+                    </div>
+                  </div>
+                </Col>
+
+                {/* Additional Account Info */}
+                <Col xs={24}>
+                  <Divider />
+                  <div className="account-additional-info">
+                    <div className="info-item">
+                      <Typography.Text strong>Account Status: </Typography.Text>
+                      <span
+                        className={
+                          userProfile.isActive
+                            ? "status-active"
+                            : "status-inactive"
+                        }
+                      >
+                        {userProfile.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <Typography.Text strong>Role: </Typography.Text>
+                      <span className="role-badge">{userProfile.role}</span>
+                    </div>
+                    <div className="info-item">
+                      <Typography.Text strong>
+                        Last Password Update:{" "}
+                      </Typography.Text>
+                      <span>
+                        {new Date(userProfile.updatedAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </Col>
@@ -161,18 +276,20 @@ const Account = () => {
           ) : (
             // Edit Mode
             <div className="account-edit-mode">
-              <div className="account-edit-header">
-                <Title level={5}>Edit Credentials</Title>
-              </div>
-
               <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSave}
                 size="large"
+                initialValues={
+                  {
+                    // email: userProfile.email,
+                    // twofaEnabled: userProfile.twofaEnabled || false,
+                  }
+                }
               >
                 <Row gutter={16}>
-                  <Col xs={24}>
+                  {/* <Col xs={24}>
                     <Form.Item
                       label="Email Address"
                       name="email"
@@ -189,18 +306,36 @@ const Account = () => {
                         prefix={<MailOutlined className="form-icon" />}
                       />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
 
                   <Col xs={24}>
                     <Divider orientation="left">
-                      Change Password (Optional)
+                      Change Password
+                      {/* (Optional) */}
                     </Divider>
                   </Col>
 
                   <Col xs={24}>
-                    <Form.Item label="Current Password" name="currentPassword">
+                    <Form.Item
+                      label="Current Password"
+                      name="currentPassword"
+                      rules={[
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (getFieldValue("newPassword") && !value) {
+                              return Promise.reject(
+                                new Error(
+                                  "Current password is required to change password"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
+                    >
                       <Input.Password
-                        placeholder="Enter current password"
+                        placeholder="Enter your current password"
                         prefix={<LockOutlined className="form-icon" />}
                       />
                     </Form.Item>
@@ -218,10 +353,10 @@ const Account = () => {
                                 new Error("Please enter new password")
                               );
                             }
-                            if (value && value.length < 8) {
+                            if (value && value.length < 6) {
                               return Promise.reject(
                                 new Error(
-                                  "Password must be at least 8 characters"
+                                  "Password must be at least 6 characters"
                                 )
                               );
                             }
@@ -274,42 +409,21 @@ const Account = () => {
                     <Divider />
                   </Col>
 
-                  <Col xs={24}>
+                  {/* <Col xs={24}>
                     <Form.Item
                       label="Two-Factor Authentication"
-                      name="twoFactorEnabled"
+                      name="twofaEnabled"
                       valuePropName="checked"
                     >
                       <div className="two-factor-toggle">
                         <Switch />
-                        <Text className="two-factor-toggle-text">
+                        <Typography.Text className="two-factor-toggle-text">
                           Enable two-factor authentication for enhanced security
-                        </Text>
+                        </Typography.Text>
                       </div>
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                 </Row>
-
-                <div className="account-form-actions">
-                  <Button
-                    icon={<CloseOutlined />}
-                    onClick={handleCancel}
-                    size="large"
-                    className="cancel-button"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    icon={<SaveOutlined />}
-                    loading={loading}
-                    size="large"
-                    className="save-button"
-                  >
-                    {loading ? "Saving..." : "Save Changes"}
-                  </Button>
-                </div>
               </Form>
             </div>
           )}
