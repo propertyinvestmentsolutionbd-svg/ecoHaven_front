@@ -39,10 +39,13 @@ const Login = () => {
       //     1500
       //   )
       // );
-      if (response?.accessToken) {
+      if (response?.token) {
         toast.success("User logged in successfully!");
         router.push("/dashboard");
-        storeUserInfo({ accessToken: response?.accessToken });
+        storeUserInfo({
+          accessToken: response?.token,
+          menus: JSON.stringify(response?.menus?.permissions),
+        });
       }
       if (response.twoFa) {
         router.push(`/login/verify-2fa?tempToken=${response.tempToken}`);

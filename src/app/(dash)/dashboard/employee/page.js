@@ -13,6 +13,7 @@ import {
   Typography,
   Switch,
   Checkbox,
+  Spin,
 } from "antd";
 import {
   EditOutlined,
@@ -26,43 +27,14 @@ import {
 } from "@ant-design/icons";
 import "./AddEmployee.css";
 import Image from "next/image";
-import { useUserCreateMutation } from "@/redux/api/userApi";
+import {
+  useAllUsersQuery,
+  useRemoveUserMutation,
+  useUserCreateMutation,
+} from "@/redux/api/userApi";
 import { toast } from "react-toastify";
 
 const ManageEmployees = () => {
-  const mockEmployees = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@company.com",
-      contactNo: "+1 234 567 8900",
-      role: "employee",
-      address: "123 Main Street, City, Country",
-      linkedinUrl: "https://linkedin.com/in/johndoe",
-      profileImg: "https://example.com/profile1.jpg",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@company.com",
-      contactNo: "+1 234 567 8901",
-      role: "admin",
-      address: "456 Oak Avenue, City, Country",
-      linkedinUrl: "https://linkedin.com/in/janesmith",
-      profileImg: "https://example.com/profile2.jpg",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike.johnson@company.com",
-      contactNo: "+1 234 567 8902",
-      role: "employee",
-      address: "789 Pine Road, City, Country",
-      linkedinUrl: "https://linkedin.com/in/mikejohnson",
-      profileImg: "https://example.com/profile3.jpg",
-    },
-  ];
-  const [employees, setEmployees] = useState(mockEmployees);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -70,7 +42,16 @@ const ManageEmployees = () => {
   const [fileList, setFileList] = useState([]);
   const [isAgent, setIsAgent] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [removeUser] = useRemoveUserMutation();
+  const [modal, contextHolder] = Modal.useModal();
+
+  const { data, isLoading, refetch } = useAllUsersQuery();
   // const [userCreate] = useUserCreateMutation();
+
+  console.log({ data });
+
+  // Get employees from API data
+  const employees = data?.data?.users || [];
 
   const columns = [
     {
@@ -81,9 +62,15 @@ const ManageEmployees = () => {
         <div className="employee-profile">
           <div className="profile-avatar">
             {record.profileImg ? (
-              <Image src={record.profileImg} alt={name} fill />
+              <Image
+                src={`http://localhost:5000${record.profileImg}`}
+                alt={name}
+                width={40}
+                height={40}
+                style={{ borderRadius: "50%", objectFit: "cover" }}
+              />
             ) : (
-              <UserOutlined />
+              <UserOutlined style={{ fontSize: "20px" }} />
             )}
           </div>
           <div className="profile-info">
@@ -111,7 +98,7 @@ const ManageEmployees = () => {
         <div className="address-cell">
           {address && address.length > 50
             ? `${address.substring(0, 50)}...`
-            : address}
+            : address || "Not provided"}
         </div>
       ),
     },
@@ -165,19 +152,30 @@ const ManageEmployees = () => {
       email: employee.email,
       contactNo: employee.contactNo,
       role: employee.role,
-      address: employee.address,
-      linkedinUrl: employee.linkedinUrl,
+      designation: employee.designation || "",
+      address: employee.address || "",
+      linkedinUrl: employee.linkedinUrl || "",
+      profileDescription: employee.profileDescription || "",
+      agentDescription: employee.agentDescription || "",
     });
+    setIsAgent(employee.isAgent || false);
+    setIsFeatured(employee.isFeatured || false);
     setIsModalVisible(true);
   };
 
-  const handleDelete = (id) => {
-    Modal.confirm({
+  const handleDelete = async (id) => {
+    modal.confirm({
       title: "Are you sure you want to delete this employee?",
       content: "This action cannot be undone.",
-      onOk() {
-        setEmployees(employees.filter((employee) => employee.id !== id));
-        message.success("Employee deleted successfully");
+      async onOk() {
+        try {
+          const res = await removeUser(id).unwrap();
+          toast.success(res?.message || "Employee deleted successfully");
+          refetch();
+        } catch (error) {
+          console.log("Error deleting employee:", { error });
+          toast.error(error.data?.message || "Failed to delete employee");
+        }
       },
     });
   };
@@ -186,6 +184,8 @@ const ManageEmployees = () => {
     setEditingEmployee(null);
     form.resetFields();
     setFileList([]);
+    setIsAgent(false);
+    setIsFeatured(false);
     setIsModalVisible(true);
   };
 
@@ -228,101 +228,139 @@ const ManageEmployees = () => {
     try {
       const formData = new FormData();
 
-      // Append individual fields
-      formData.append("name", values.name);
-      formData.append("email", values.email);
-      formData.append("contactNo", values.contactNo);
-      formData.append("role", values.role || "employee");
-      formData.append("designation", values.designation || "");
-      formData.append("address", values.address || "");
-      formData.append("linkedinUrl", values.linkedinUrl || "");
-      formData.append("profileDescription", values.profileDescription || "");
-      formData.append("agentDescription", values.agentDescription || "");
-      formData.append("isFeatured", isFeatured.toString());
-      formData.append("isAgent", isAgent.toString());
-      formData.append("isActive", "true");
-      formData.append("twofaEnabled", "true");
+      if (editingEmployee) {
+        // UPDATE MODE - Use profile update API
+        // Prepare user data for update
+        const userData = {
+          name: values.name,
+          email: values.email,
+          contactNo: values.contactNo,
+          role: values.role || "employee",
+          designation: values.designation || "",
+          address: values.address || "",
+          linkedinUrl: values.linkedinUrl || null, // Use null instead of empty string
+          profileDescription: values.profileDescription || "",
+          agentDescription: values.agentDescription || "",
+          isFeatured: isFeatured,
+          isAgent: isAgent,
+          isActive: true,
+          twofaEnabled: true,
+          country: "",
+          removeProfileImage:
+            fileList.length === 0 && editingEmployee.profileImg, // Remove image if no new file selected
+        };
 
-      if (!editingEmployee && values.password) {
-        formData.append("password", values.password);
-      }
+        // Append userData as JSON for update
+        formData.append("userData", JSON.stringify(userData));
 
-      // DEBUG: Check the file object
-      console.log("FileList[0]:", fileList[0]);
-      console.log("Is File instance?", fileList[0] instanceof File);
-      // console.log("File object keys:", Object.keys(fileList[0]));
-
-      // Handle file upload properly
-      if (fileList.length > 0) {
-        let fileToSend = fileList[0];
-
-        // If it's not a File instance, we need to convert it
-        if (!(fileToSend instanceof File)) {
-          console.log("File is not a File instance, converting...");
-
-          // Method 1: If it has originFileObj, use that
-          if (fileToSend.originFileObj) {
-            fileToSend = fileToSend.originFileObj;
-            console.log("Using originFileObj:", fileToSend);
-          }
-          // Method 2: If it has thumbUrl, fetch and convert
-          else if (fileToSend.thumbUrl) {
-            console.log("Converting from thumbUrl...");
-            const response = await fetch(fileToSend.thumbUrl);
-            const blob = await response.blob();
-            fileToSend = new File([blob], fileToSend.name, { type: blob.type });
-          }
-          // Method 3: If it's the Ant Design file object with uid, etc.
-          else if (fileToSend.uid && fileToSend.name) {
-            console.log("Ant Design file object detected, but no file content");
-            // We need to get the actual file content
-          }
+        // Append new file if selected
+        if (fileList.length > 0 && fileList[0].originFileObj) {
+          formData.append("profileImg", fileList[0].originFileObj);
         }
 
-        // Only append if it's a proper File
-        if (fileToSend instanceof File) {
-          formData.append("profileImg", fileToSend);
-          console.log(
-            "Appended file:",
-            fileToSend.name,
-            fileToSend.size,
-            "bytes"
-          );
+        // Call update API
+        const response = await fetch(
+          `http://localhost:5000/api/v1/${editingEmployee.id}/with-image`,
+          {
+            method: "PUT",
+            body: formData,
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to update employee");
+        }
+
+        if (result.success) {
+          toast.success("Employee updated successfully");
+          handleModalClose();
+          // You might want to refresh the employee list here
+          if (refetch) refetch(); // If you have a refetch function
         } else {
-          toast.warn("Cannot append file - not a File instance:", fileToSend);
+          throw new Error(result.message || "Failed to update employee");
         }
-      }
-
-      // Debug: Log ALL FormData entries
-      console.log("=== FORM DATA ENTRIES ===");
-      for (let [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(
-            `${key}: File - ${value.name} (${value.size} bytes, ${value.type})`
-          );
-        } else {
-          console.log(`${key}: ${value}`);
-        }
-      }
-
-      // Use fetch
-      const response = await fetch("http://localhost:5000/api/v1/auth/signup", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success("Employee created successfully");
-        handleModalClose();
       } else {
-        throw new Error(result.message || "Request failed");
+        // CREATE MODE - Use signup API
+        // Append individual fields for create
+        formData.append("name", values.name);
+        formData.append("email", values.email);
+        formData.append("contactNo", values.contactNo);
+        formData.append("role", values.role || "employee");
+        formData.append("designation", values.designation || "");
+        formData.append("address", values.address || "");
+        formData.append("linkedinUrl", values.linkedinUrl || null); // Use null instead of empty string
+        formData.append("profileDescription", values.profileDescription || "");
+        formData.append("agentDescription", values.agentDescription || "");
+        formData.append("isFeatured", isFeatured.toString());
+        formData.append("isAgent", isAgent.toString());
+        formData.append("isActive", "true");
+        formData.append("twofaEnabled", "true");
+        formData.append("country", "");
+
+        if (values.password) {
+          formData.append("password", values.password);
+        }
+
+        // Handle file upload properly
+        if (fileList.length > 0) {
+          let fileToSend = fileList[0];
+
+          // If it's not a File instance, we need to convert it
+          if (!(fileToSend instanceof File)) {
+            // Method 1: If it has originFileObj, use that
+            if (fileToSend.originFileObj) {
+              fileToSend = fileToSend.originFileObj;
+            }
+            // Method 2: If it has thumbUrl, fetch and convert
+            else if (fileToSend.thumbUrl) {
+              const response = await fetch(fileToSend.thumbUrl);
+              const blob = await response.blob();
+              fileToSend = new File([blob], fileToSend.name, {
+                type: blob.type,
+              });
+            }
+          }
+
+          // Only append if it's a proper File
+          if (fileToSend instanceof File) {
+            formData.append("profileImg", fileToSend);
+          } else {
+            toast.warn("Cannot append file - not a File instance");
+          }
+        }
+
+        // Use fetch for create
+        const response = await fetch(
+          "http://localhost:5000/api/v1/auth/signup",
+          {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          toast.success("Employee created successfully");
+          handleModalClose();
+          // You might want to refresh the employee list here
+          if (refetch) refetch(); // If you have a refetch function
+        } else {
+          throw new Error(result.message || "Request failed");
+        }
       }
     } catch (error) {
-      console.log("Error creating employee:", { error });
-      toast.error("Failed to save employee. Please try again.");
+      console.log("Error saving employee:", { error });
+      toast.error(
+        error.message ||
+          `Failed to ${
+            editingEmployee ? "update" : "create"
+          } employee. Please try again.`
+      );
     } finally {
       setLoading(false);
     }
@@ -336,12 +374,27 @@ const ManageEmployees = () => {
     accept: "image/*",
     maxCount: 1,
   };
+
   const handleMediaTypeChange = (checked) => {
     setIsAgent(checked?.target?.checked);
     form.setFieldsValue({ agentDescription: "" });
   };
+
+  if (isLoading) {
+    return (
+      <div className="manage-employees-page">
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          <Spin size="large" />
+          <div style={{ marginTop: "16px" }}>Loading employees...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="manage-employees-page">
+      {contextHolder}
+
       <div className="employees-header">
         <div className="header-content">
           <Typography.Title level={2} className="employees-title">
@@ -483,7 +536,7 @@ const ManageEmployees = () => {
               name="isAgent"
               label="Is Agent"
               valuePropName="checked"
-              initialValue={false}
+              initialValue={isAgent}
               layout="horizontal"
               style={{
                 marginTop: "2rem",
@@ -495,7 +548,7 @@ const ManageEmployees = () => {
               name="isFeatured"
               label="Is Featured"
               valuePropName="checked"
-              initialValue={false}
+              initialValue={isFeatured}
               layout="horizontal"
               style={{
                 marginTop: "2rem",

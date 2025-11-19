@@ -43,7 +43,27 @@ const userApi = baseApi.injectEndpoints({
       //     meta,
       //   };
       // },
-      providesTags: ["service"],
+    }),
+    allUsers: build.query({
+      query: () => {
+        return {
+          url: `/employees`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+      // transformResponse: (response: IService[], meta: IMeta) => {
+      //   return {
+      //     services: response,
+      //     meta,
+      //   };
+      // },
+    }),
+    removeUser: build.mutation({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "DELETE",
+      }),
     }),
   }),
   //   overrideExisting: false,
@@ -55,4 +75,6 @@ export const {
   useUserVerificationMutation,
   useUserProfileQuery,
   useUserPassChangeMutation,
+  useAllUsersQuery,
+  useRemoveUserMutation,
 } = userApi;
