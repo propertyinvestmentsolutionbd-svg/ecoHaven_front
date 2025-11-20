@@ -208,12 +208,122 @@ const ManageProjects = () => {
     setFileList([]);
   };
 
+  // const handleSubmit = async (values) => {
+  //   setLoading(true);
+  //   try {
+  //     const formData = new FormData();
+
+  //     // Validate required fields on frontend
+  //     if (!values.name || !values.status || !values.projectType) {
+  //       message.error(
+  //         "Please fill all required fields: Name, Status, and Project Type"
+  //       );
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     // Prepare project data with proper null handling
+  //     const projectPayload = {
+  //       name: values.name,
+  //       mapUrl: values.mapUrl || null,
+  //       location: values.location || null,
+  //       priceRange: values.priceRange || null,
+  //       sizeSqft: values.sizeSqft || null,
+  //       landArea: values.landArea || null,
+  //       status: values.status,
+  //       description: values.description || null,
+  //       amenities: values.amenities || [],
+  //       projectType: values.projectType,
+  //       progressPercentage: values.progressPercentage || 0,
+  //       completionYear: values.completionYear || null,
+  //       brochureUrl: values.brochureUrl || null,
+  //       virtualTourUrl: values.virtualTourUrl || null,
+  //       latitude: values.latitude || null,
+  //       longitude: values.longitude || null,
+  //     };
+
+  //     console.log("Project payload:", projectPayload);
+  //     console.log("Number of images:", fileList.length);
+
+  //     // Append project data as JSON
+  //     formData.append("projectData", JSON.stringify(projectPayload));
+
+  //     // Append project images (optional - works with 0 images)
+  //     if (fileList.length > 0) {
+  //       fileList.forEach((file) => {
+  //         if (file.originFileObj) {
+  //           formData.append("projectImages", file.originFileObj);
+  //           console.log("Added project image:", file.name);
+  //         }
+  //       });
+  //     } else {
+  //       console.log("No images provided - creating project without images");
+  //     }
+
+  //     // Debug: Log FormData contents
+  //     console.log("=== FORM DATA SUMMARY ===");
+  //     for (let [key, value] of formData.entries()) {
+  //       if (value instanceof File) {
+  //         console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
+  //       } else {
+  //         console.log(
+  //           `${key}: ${
+  //             typeof value === "string"
+  //               ? value.substring(0, 100) + "..."
+  //               : value
+  //           }`
+  //         );
+  //       }
+  //     }
+
+  //     // Determine API endpoint based on create/edit
+  //     const url = editingProject
+  //       ? `http://localhost:5000/api/v1/projects/${editingProject.id}/update` // You'll need to create this endpoint
+  //       : "http://localhost:5000/api/v1/createProject/with-files"; // Fixed URL path
+
+  //     const method = editingProject ? "PUT" : "POST";
+
+  //     console.log(`Calling ${method} ${url}`);
+
+  //     // Call the API
+  //     const response = await fetch(url, {
+  //       method,
+  //       body: formData,
+  //       credentials: "include",
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (response.ok && result.success) {
+  //       const successMessage = editingProject
+  //         ? "Project updated successfully"
+  //         : fileList.length > 0
+  //         ? "Project created with images successfully"
+  //         : "Project created successfully";
+
+  //       toast.success(successMessage);
+
+  //       // Refresh the projects list
+  //       refetch();
+
+  //       handleModalClose();
+  //     } else {
+  //       throw new Error(result.message || "Failed to save project");
+  //     }
+  //   } catch (error) {
+  //     console.log("Error saving project:", error);
+  //     toast.error(error.message || "Something went wrong. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
       const formData = new FormData();
 
-      // Validate required fields on frontend
+      // Validate required fields
       if (!values.name || !values.status || !values.projectType) {
         message.error(
           "Please fill all required fields: Name, Status, and Project Type"
@@ -222,7 +332,18 @@ const ManageProjects = () => {
         return;
       }
 
-      // Prepare project data with proper null handling
+      // Filter only NEW images (those with originFileObj)
+      const newImages = fileList.filter((file) => file.originFileObj);
+      const hasNewImages = newImages.length > 0;
+      const hasExistingImages = editingProject?.images?.length > 0;
+
+      console.log("File list analysis:", {
+        totalFiles: fileList.length,
+        newImages: newImages.length,
+        existingImages: editingProject?.images?.length,
+      });
+
+      // Prepare project data
       const projectPayload = {
         name: values.name,
         mapUrl: values.mapUrl || null,
@@ -240,46 +361,30 @@ const ManageProjects = () => {
         virtualTourUrl: values.virtualTourUrl || null,
         latitude: values.latitude || null,
         longitude: values.longitude || null,
+        // FIX: Set removeProfileImage to true when we have new images to replace old ones
+        removeProfileImage: editingProject ? hasNewImages : false,
       };
 
       console.log("Project payload:", projectPayload);
-      console.log("Number of images:", fileList.length);
+      console.log("New images to upload:", newImages.length);
 
       // Append project data as JSON
       formData.append("projectData", JSON.stringify(projectPayload));
 
-      // Append project images (optional - works with 0 images)
-      if (fileList.length > 0) {
-        fileList.forEach((file) => {
-          if (file.originFileObj) {
-            formData.append("projectImages", file.originFileObj);
-            console.log("Added project image:", file.name);
-          }
+      // Append ONLY new project images
+      if (hasNewImages) {
+        newImages.forEach((file) => {
+          formData.append("projectImages", file.originFileObj);
+          console.log("Added new project image:", file.name);
         });
       } else {
-        console.log("No images provided - creating project without images");
-      }
-
-      // Debug: Log FormData contents
-      console.log("=== FORM DATA SUMMARY ===");
-      for (let [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
-        } else {
-          console.log(
-            `${key}: ${
-              typeof value === "string"
-                ? value.substring(0, 100) + "..."
-                : value
-            }`
-          );
-        }
+        console.log("No new project images to upload");
       }
 
       // Determine API endpoint based on create/edit
       const url = editingProject
-        ? `http://localhost:5000/api/v1/projects/${editingProject.id}/update` // You'll need to create this endpoint
-        : "http://localhost:5000/api/v1/createProject/with-files"; // Fixed URL path
+        ? `http://localhost:5000/api/v1/project/${editingProject.id}/update/with-files`
+        : "http://localhost:5000/api/v1/createProject/with-files";
 
       const method = editingProject ? "PUT" : "POST";
 
@@ -296,9 +401,9 @@ const ManageProjects = () => {
 
       if (response.ok && result.success) {
         const successMessage = editingProject
-          ? "Project updated successfully"
-          : fileList.length > 0
-          ? "Project created with images successfully"
+          ? hasNewImages
+            ? "Project updated with new images successfully"
+            : "Project updated successfully"
           : "Project created successfully";
 
         toast.success(successMessage);
@@ -317,7 +422,6 @@ const ManageProjects = () => {
       setLoading(false);
     }
   };
-
   const uploadProps = {
     fileList,
     onChange: ({ fileList }) => setFileList(fileList),
