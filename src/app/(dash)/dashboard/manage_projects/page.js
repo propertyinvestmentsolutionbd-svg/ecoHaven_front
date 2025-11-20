@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -14,69 +14,41 @@ import {
   Row,
   Col,
   message,
+  Image,
+  Descriptions,
 } from "antd";
 import {
   EditOutlined,
   PlusOutlined,
   DeleteOutlined,
   UploadOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import "./ManageProjects.css";
+import { useAllProjectsQuery } from "@/redux/api/projectApi";
+import { toast } from "react-toastify";
 
 const ManageProjects = () => {
-  // Mock data
-  const mockProjects = [
-    {
-      id: 1,
-      name: "Shanila Tower",
-      location: "Dhaka",
-      priceRange: "5-10 Crore",
-      sizeSqft: 2500,
-      landArea: "5 Katha",
-      status: "Ongoing",
-      description: "Luxury residential project",
-      amenities: ["Swimming Pool", "Gym", "Parking"],
-      projectType: "Residential",
-      progressPercentage: 65,
-      completionYear: 2025,
-      latitude: 23.8103,
-      longitude: 90.4125,
-      images: [
-        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
-      ],
-    },
-    {
-      id: 2,
-      name: "Marine Tower",
-      location: "Chittagong",
-      priceRange: "8-15 Crore",
-      sizeSqft: 3200,
-      landArea: "7 Katha",
-      status: "Completed",
-      description: "Premium commercial complex",
-      amenities: ["Conference Room", "Cafeteria", "24/7 Security"],
-      projectType: "Commercial",
-      progressPercentage: 100,
-      completionYear: 2024,
-      latitude: 22.3569,
-      longitude: 91.7832,
-      images: [
-        "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80",
-      ],
-    },
-  ];
   const [form] = Form.useForm();
-  const [projects, setProjects] = useState(mockProjects);
+  const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState();
+  const [editingProject, setEditingProject] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const { data, isLoading, refetch } = useAllProjectsQuery();
+
+  // Set projects data when API response comes
+  useEffect(() => {
+    if (data?.data?.projects) {
+      setProjects(data.data.projects);
+    }
+  }, [data]);
 
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      //   fixed: "left",
       width: 180,
     },
     {
@@ -135,22 +107,23 @@ const ManageProjects = () => {
     {
       title: "Actions",
       key: "actions",
-      //   fixed: "right",
-      width: 120,
+      width: 150,
       render: (_, record) => (
         <Space size="small">
           <Button
             type="text"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
-            className="action-btn"
+            className="edit-btn"
+            title="Edit Project"
           />
           <Button
             type="text"
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
-            className="action-btn"
+            className="delete-btn"
+            title="Delete Project"
           />
         </Space>
       ),
@@ -159,7 +132,40 @@ const ManageProjects = () => {
 
   const handleEdit = (project) => {
     setEditingProject(project);
-    form.setFieldsValue(project);
+
+    // Set form values for editing
+    form.setFieldsValue({
+      name: project.name,
+      projectType: project.projectType,
+      location: project.location,
+      status: project.status, // Convert to lowercase for form
+      priceRange: project.priceRange,
+      sizeSqft: project.sizeSqft,
+      landArea: project.landArea,
+      progressPercentage: project.progressPercentage,
+      completionYear: project.completionYear,
+      latitude: project.latitude,
+      longitude: project.longitude,
+      mapUrl: project.mapUrl,
+      brochureUrl: project.brochureUrl,
+      virtualTourUrl: project.virtualTourUrl,
+      amenities: project.amenities || [],
+      description: project.description,
+    });
+
+    // Set file list for existing images
+    if (project.images && project.images.length > 0) {
+      const existingFiles = project.images.map((image, index) => ({
+        uid: `-${index}`,
+        name: `image-${index}.jpg`,
+        status: "done",
+        url: `http://localhost:5000${image.imageUrl}`,
+      }));
+      setFileList(existingFiles);
+    } else {
+      setFileList([]);
+    }
+
     setIsModalOpen(true);
   };
 
@@ -171,6 +177,7 @@ const ManageProjects = () => {
       okType: "danger",
       cancelText: "Cancel",
       onOk() {
+        // You can implement actual delete API call here
         setProjects(projects.filter((p) => p.id !== id));
         message.success("Project deleted successfully");
       },
@@ -180,7 +187,7 @@ const ManageProjects = () => {
   const handleCreate = () => {
     setEditingProject(null);
     form.resetFields();
-    form.setFieldsValue({ progressPercentage: 0, amenities: [], images: [] });
+    setFileList([]);
     setIsModalOpen(true);
   };
 
@@ -188,39 +195,135 @@ const ManageProjects = () => {
     setIsModalOpen(false);
     setEditingProject(null);
     form.resetFields();
+    setFileList([]);
   };
 
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const formData = new FormData();
 
-      if (editingProject) {
-        // Update existing project
-        setProjects(
-          projects.map((p) =>
-            p.id === editingProject.id ? { ...values, id: p.id } : p
-          )
+      // Validate required fields on frontend
+      if (!values.name || !values.status || !values.projectType) {
+        message.error(
+          "Please fill all required fields: Name, Status, and Project Type"
         );
-        message.success("Project updated successfully");
-      } else {
-        // Create new project
-        const newProject = {
-          ...values,
-          id: Math.max(...projects.map((p) => p.id), 0) + 1,
-        };
-        setProjects([...projects, newProject]);
-        message.success("Project created successfully");
+        setLoading(false);
+        return;
       }
 
-      handleModalClose();
+      // Prepare project data with proper null handling
+      const projectPayload = {
+        name: values.name,
+        mapUrl: values.mapUrl || null,
+        location: values.location || null,
+        priceRange: values.priceRange || null,
+        sizeSqft: values.sizeSqft || null,
+        landArea: values.landArea || null,
+        status: values.status,
+        description: values.description || null,
+        amenities: values.amenities || [],
+        projectType: values.projectType,
+        progressPercentage: values.progressPercentage || 0,
+        completionYear: values.completionYear || null,
+        brochureUrl: values.brochureUrl || null,
+        virtualTourUrl: values.virtualTourUrl || null,
+        latitude: values.latitude || null,
+        longitude: values.longitude || null,
+      };
+
+      console.log("Project payload:", projectPayload);
+      console.log("Number of images:", fileList.length);
+
+      // Append project data as JSON
+      formData.append("projectData", JSON.stringify(projectPayload));
+
+      // Append project images (optional - works with 0 images)
+      if (fileList.length > 0) {
+        fileList.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("projectImages", file.originFileObj);
+            console.log("Added project image:", file.name);
+          }
+        });
+      } else {
+        console.log("No images provided - creating project without images");
+      }
+
+      // Debug: Log FormData contents
+      console.log("=== FORM DATA SUMMARY ===");
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
+        } else {
+          console.log(
+            `${key}: ${
+              typeof value === "string"
+                ? value.substring(0, 100) + "..."
+                : value
+            }`
+          );
+        }
+      }
+
+      // Determine API endpoint based on create/edit
+      const url = editingProject
+        ? `http://localhost:5000/api/v1/projects/${editingProject.id}/update` // You'll need to create this endpoint
+        : "http://localhost:5000/api/v1/createProject/with-files"; // Fixed URL path
+
+      const method = editingProject ? "PUT" : "POST";
+
+      console.log(`Calling ${method} ${url}`);
+
+      // Call the API
+      const response = await fetch(url, {
+        method,
+        body: formData,
+        credentials: "include",
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        const successMessage = editingProject
+          ? "Project updated successfully"
+          : fileList.length > 0
+          ? "Project created with images successfully"
+          : "Project created successfully";
+
+        toast.success(successMessage);
+
+        // Refresh the projects list
+        refetch();
+
+        handleModalClose();
+      } else {
+        throw new Error(result.message || "Failed to save project");
+      }
     } catch (error) {
-      message.error("Something went wrong. Please try again.");
+      console.log("Error saving project:", error);
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  const uploadProps = {
+    fileList,
+    onChange: ({ fileList }) => setFileList(fileList),
+    beforeUpload: () => false,
+    listType: "picture-card",
+    accept: "image/*",
+    maxCount: 10,
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", padding: "50px" }}>
+        Loading projects...
+      </div>
+    );
+  }
 
   return (
     <div className="manage-projects-page">
@@ -252,9 +355,11 @@ const ManageProjects = () => {
               showSizeChanger: true,
               showTotal: (total) => `Total ${total} projects`,
             }}
+            loading={isLoading}
           />
         </div>
 
+        {/* Create/Edit Modal */}
         <Modal
           title={editingProject ? "Edit Project" : "Create New Project"}
           open={isModalOpen}
@@ -302,7 +407,11 @@ const ManageProjects = () => {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Location" name="location">
+                <Form.Item
+                  label="Location"
+                  name="location"
+                  rules={[{ required: true, message: "Please enter location" }]}
+                >
                   <Input placeholder="Enter location" />
                 </Form.Item>
               </Col>
@@ -324,6 +433,7 @@ const ManageProjects = () => {
                 </Form.Item>
               </Col>
 
+              {/* ... rest of your form fields remain the same ... */}
               <Col xs={24} md={12}>
                 <Form.Item label="Price Range" name="priceRange">
                   <Input placeholder="e.g., 5-10 Crore" />
@@ -400,10 +510,23 @@ const ManageProjects = () => {
                 </Form.Item>
               </Col>
 
+              <Col xs={24} md={12}>
+                <Form.Item label="Virtual Tour URL" name="virtualTourUrl">
+                  <Input placeholder="Enter virtual tour URL" />
+                </Form.Item>
+              </Col>
+
               <Col xs={24}>
                 <Form.Item label="Amenities" name="amenities">
                   <Select
                     mode="tags"
+                    options={[
+                      { value: "Parking", label: "Parking" },
+                      { value: "Park", label: "Park" },
+                      { value: "Swimming Pool", label: "Swimming Pool" },
+                      { value: "Gym", label: "Gym" },
+                      { value: "Security", label: "Security" },
+                    ]}
                     placeholder="Add amenities (press Enter to add)"
                     style={{ width: "100%" }}
                   />
@@ -420,21 +543,22 @@ const ManageProjects = () => {
               </Col>
 
               <Col xs={24}>
-                <Form.Item
-                  label="Images"
-                  name="images"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => {
-                    if (Array.isArray(e)) return e;
-                    return e?.fileList;
-                  }}
-                >
-                  <Upload listType="picture-card" beforeUpload={() => false}>
-                    <div>
-                      <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
+                <Form.Item label="Project Images">
+                  <Upload {...uploadProps}>
+                    {fileList.length >= 10 ? null : (
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload</div>
+                      </div>
+                    )}
                   </Upload>
+                  <div
+                    style={{ marginTop: 8, color: "#666", fontSize: "12px" }}
+                  >
+                    {editingProject
+                      ? "Upload new images to replace existing ones"
+                      : "Upload up to 10 images. First image will be set as featured."}
+                  </div>
                 </Form.Item>
               </Col>
             </Row>
@@ -449,6 +573,8 @@ const ManageProjects = () => {
             </Form.Item>
           </Form>
         </Modal>
+
+        {/* View Modal */}
       </div>
     </div>
   );
