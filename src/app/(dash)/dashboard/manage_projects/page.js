@@ -25,7 +25,10 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 import "./ManageProjects.css";
-import { useAllProjectsQuery } from "@/redux/api/projectApi";
+import {
+  useAllProjectsQuery,
+  useRemoveProjectMutation,
+} from "@/redux/api/projectApi";
 import { toast } from "react-toastify";
 
 const ManageProjects = () => {
@@ -36,6 +39,8 @@ const ManageProjects = () => {
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const { data, isLoading, refetch } = useAllProjectsQuery();
+  const [removeProject] = useRemoveProjectMutation();
+  const [modal, contextHolder] = Modal.useModal();
 
   // Set projects data when API response comes
   useEffect(() => {
@@ -170,16 +175,21 @@ const ManageProjects = () => {
   };
 
   const handleDelete = (id) => {
-    Modal.confirm({
+    modal.confirm({
       title: "Are you sure you want to delete this project?",
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
       okType: "danger",
       cancelText: "Cancel",
-      onOk() {
-        // You can implement actual delete API call here
-        setProjects(projects.filter((p) => p.id !== id));
-        message.success("Project deleted successfully");
+      async onOk() {
+        try {
+          const res = await removeProject(id).unwrap();
+          toast.success(res?.message || "Project deleted successfully");
+          refetch();
+        } catch (error) {
+          console.log("Error deleting employee:", { error });
+          toast.error(error.data?.message || "Failed to delete Project");
+        }
       },
     });
   };
@@ -327,6 +337,8 @@ const ManageProjects = () => {
 
   return (
     <div className="manage-projects-page">
+      {contextHolder}
+
       <div className="manage-projects-container">
         <div className="page-header">
           <div>

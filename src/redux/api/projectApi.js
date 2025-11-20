@@ -59,9 +59,9 @@ const userApi = baseApi.injectEndpoints({
       //   };
       // },
     }),
-    removeUser: build.mutation({
+    removeProject: build.mutation({
       query: (id) => ({
-        url: `/${id}`,
+        url: `/project/${id}`,
         method: "DELETE",
       }),
     }),
@@ -69,4 +69,4 @@ const userApi = baseApi.injectEndpoints({
   //   overrideExisting: false,
 });
 
-export const { useAllProjectsQuery } = userApi;
+export const { useAllProjectsQuery, useRemoveProjectMutation } = userApi;
