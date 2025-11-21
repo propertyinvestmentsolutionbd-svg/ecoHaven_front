@@ -29,10 +29,10 @@ const userApi = baseApi.injectEndpoints({
     //   }),
     //   invalidatesTags: ["user"],
     // }),
-    userProfile: build.query({
-      query: (id) => {
+    getProjectDropDown: build.query({
+      query: () => {
         return {
-          url: `/profile/${id}`,
+          url: `/projects/dropdown`,
           method: "GET",
           // params: arg,
         };
@@ -65,8 +65,19 @@ const userApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    removeProjectGalleryItem: build.mutation({
+      query: (id) => ({
+        url: `/gallery-items/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
   //   overrideExisting: false,
 });
 
-export const { useAllProjectsQuery, useRemoveProjectMutation } = userApi;
+export const {
+  useAllProjectsQuery,
+  useRemoveProjectMutation,
+  useGetProjectDropDownQuery,
+  useRemoveProjectGalleryItemMutation,
+} = userApi;

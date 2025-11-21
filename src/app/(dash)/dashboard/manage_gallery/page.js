@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -12,115 +12,118 @@ import {
   message,
   Row,
   Col,
+  Tag,
 } from "antd";
 import {
-  EditOutlined,
   PlusOutlined,
   DeleteOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import "./ManageGallery.css";
+import {
+  useAllProjectsQuery,
+  useGetProjectDropDownQuery,
+  useRemoveProjectGalleryItemMutation,
+} from "@/redux/api/projectApi";
+import { toast } from "react-toastify";
 
 const ManageGallery = () => {
-  // Mock projects for dropdown
-  const mockProjects = [
-    {
-      id: 1,
-      name: "Shanila Tower",
-      type: "Residential",
-      location: "Dhaka",
-      brochureUrl: "Bn1",
-    },
-    {
-      id: 2,
-      name: "Marine Tower",
-      type: "Commercial",
-      location: "Chittagong",
-      brochureUrl: "Bn2",
-    },
-    {
-      id: 3,
-      name: "Arifa Tower",
-      type: "Residential",
-      location: "Jalkhuri",
-      brochureUrl: "Bn1",
-    },
-  ];
-
-  // Mock gallery data
-  const mockGalleries = [
-    {
-      id: 1,
-      projectId: 3,
-      projectName: "Arifa Tower",
-      projectType: "Residential",
-      galleryTitle: "Exterior Views",
-      galleryType: "Exterior",
-      images: ["drive.com"],
-      address: "Jalkhuri",
-      brochureUrl: "Bn1",
-    },
-    {
-      id: 2,
-      projectId: 3,
-      projectName: "Arifa Tower",
-      projectType: "Residential",
-      galleryTitle: "Interior Design",
-      galleryType: "Interior",
-      images: ["drive.com"],
-      address: "Jalkhuri",
-      brochureUrl: "Bn1",
-    },
-  ];
   const [form] = Form.useForm();
-  const [galleries, setGalleries] = useState(mockGalleries);
+  const [galleries, setGalleries] = useState([]);
+  const [projectsWithGallery, setProjectsWithGallery] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingGallery, setEditingGallery] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const { data: dropdownData } = useGetProjectDropDownQuery();
+  const { data: projectData, isLoading, refetch } = useAllProjectsQuery();
+  const [removeProjectGalleryItem] = useRemoveProjectGalleryItemMutation();
+  const [modal, contextHolder] = Modal.useModal();
+
+  // Filter projects that have gallery items and set galleries
+  useEffect(() => {
+    if (projectData?.data?.projects) {
+      const projects = projectData.data.projects;
+
+      // Filter projects that have gallery items
+      const projectsWithGalleryItems = projects.filter(
+        (project) => project.galleryItems && project.galleryItems.length > 0
+      );
+
+      setProjectsWithGallery(projectsWithGalleryItems);
+
+      // Flatten all gallery items from all projects
+      const allGalleryItems = projectsWithGalleryItems.flatMap((project) =>
+        project.galleryItems.map((item) => ({
+          ...item,
+          project: {
+            // Include project info with each gallery item
+            id: project.id,
+            name: project.name,
+            projectType: project.projectType,
+            location: project.location,
+          },
+        }))
+      );
+
+      setGalleries(allGalleryItems);
+    }
+  }, [projectData]);
 
   const columns = [
     {
       title: "Project Name",
-      dataIndex: "projectName",
+      dataIndex: "project",
       key: "projectName",
       width: 150,
+      render: (project) => project?.name || "-",
     },
     {
       title: "Project Type",
-      dataIndex: "projectType",
+      dataIndex: "project",
       key: "projectType",
       width: 130,
+      render: (project) => (
+        <Tag color={project?.projectType === "Commercial" ? "blue" : "green"}>
+          {project?.projectType || "-"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Project Location",
+      dataIndex: "project",
+      key: "location",
+      width: 150,
+      render: (project) => project?.location || "-",
     },
     {
       title: "Gallery Title",
-      dataIndex: "galleryTitle",
-      key: "galleryTitle",
+      dataIndex: "title",
+      key: "title",
       width: 150,
     },
     {
-      title: "Gallery Type",
-      dataIndex: "galleryType",
-      key: "galleryType",
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
       width: 130,
+      render: (category) => <Tag color="purple">{category || "general"}</Tag>,
     },
     {
-      title: "Image",
-      dataIndex: "images",
-      key: "images",
+      title: "Media",
+      dataIndex: "imageUrl",
+      key: "media",
       width: 120,
-      render: (images) => images[0] || "-",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      width: 120,
-    },
-    {
-      title: "Brochure",
-      dataIndex: "brochureUrl",
-      key: "brochureUrl",
-      width: 100,
+      render: (imageUrl, record) => (
+        <div style={{ textAlign: "center" }}>
+          {imageUrl ? (
+            <span style={{ color: "#52c41a" }}>📷 Image</span>
+          ) : record.videoUrl ? (
+            <span style={{ color: "#1890ff" }}>🎥 Video</span>
+          ) : (
+            <span style={{ color: "#999" }}>-</span>
+          )}
+        </div>
+      ),
     },
     {
       title: "Actions",
@@ -131,118 +134,149 @@ const ManageGallery = () => {
         <Space size="small">
           <Button
             type="text"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-            className="action-btn edit-btn"
-          />
-          <Button
-            type="text"
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
             className="action-btn delete-btn"
+            title="Delete Gallery Item"
           />
         </Space>
       ),
     },
   ];
 
-  const handleEdit = (gallery) => {
-    setEditingGallery(gallery);
-    form.setFieldsValue({
-      projectId: gallery.projectId,
-      galleryTitle: gallery.galleryTitle,
-      galleryType: gallery.galleryType,
-      images: gallery.images,
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this gallery?",
+  const handleDelete = async (id) => {
+    modal.confirm({
+      title: "Are you sure you want to delete this gallery item?",
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
       okType: "danger",
       cancelText: "Cancel",
-      onOk() {
-        setGalleries(galleries.filter((g) => g.id !== id));
-        message.success("Gallery deleted successfully");
+      async onOk() {
+        try {
+          const response = await removeProjectGalleryItem(id).unwrap();
+          const result = await response;
+
+          if (result.success) {
+            // Remove the deleted item from state
+            setGalleries(galleries.filter((g) => g.id !== id));
+
+            // Refresh projects data to update the list
+            refetch();
+
+            toast.success("Gallery item deleted successfully");
+          } else {
+            toast.error(result.message || "Failed to delete gallery item");
+          }
+        } catch (error) {
+          console.log("Error deleting gallery item:", { error });
+          toast.error("Failed to delete gallery item");
+        }
       },
     });
   };
 
   const handleCreate = () => {
-    setEditingGallery(null);
     form.resetFields();
+    setFileList([]);
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setEditingGallery(null);
     form.resetFields();
+    setFileList([]);
   };
 
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const formData = new FormData();
 
-      const selectedProject = mockProjects.find(
-        (p) => p.id === values.projectId
-      );
+      // Append gallery data
+      const galleryPayload = {
+        titles: [values.title || "Gallery Item"],
+        categories: [values.category || "general"],
+      };
 
-      if (editingGallery) {
-        setGalleries(
-          galleries.map((g) =>
-            g.id === editingGallery.id
-              ? {
-                  ...g,
-                  projectId: values.projectId,
-                  projectName: selectedProject?.name || "",
-                  projectType: selectedProject?.type || "",
-                  galleryTitle: values.galleryTitle,
-                  galleryType: values.galleryType,
-                  images: values.images || [],
-                  address: selectedProject?.location || "",
-                  brochureUrl: selectedProject?.brochureUrl,
-                }
-              : g
-          )
-        );
-        message.success("Gallery updated successfully");
+      formData.append("titles", JSON.stringify(galleryPayload.titles));
+      formData.append("categories", JSON.stringify(galleryPayload.categories));
+
+      // Append files
+      if (fileList.length > 0) {
+        fileList.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("galleryMedia", file.originFileObj);
+          }
+        });
       } else {
-        const newGallery = {
-          id: Math.max(...galleries.map((g) => g.id), 0) + 1,
-          projectId: values.projectId,
-          projectName: selectedProject?.name || "",
-          projectType: selectedProject?.type || "",
-          galleryTitle: values.galleryTitle,
-          galleryType: values.galleryType,
-          images: values.images || [],
-          address: selectedProject?.location || "",
-          brochureUrl: selectedProject?.brochureUrl,
-        };
-        setGalleries([...galleries, newGallery]);
-        message.success("Gallery created successfully");
+        message.error("Please upload at least one file");
+        setLoading(false);
+        return;
       }
 
-      handleModalClose();
+      console.log("Submitting gallery data:", {
+        projectId: values.projectId,
+        title: values.title,
+        category: values.category,
+        files: fileList.length,
+      });
+
+      // Call the API
+      const response = await fetch(
+        `http://localhost:5000/api/v1/project/${values.projectId}/gallery-items`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        message.success(result.message || "Gallery items added successfully");
+
+        // Refresh projects data to show the new gallery items
+        refetch();
+
+        handleModalClose();
+      } else {
+        throw new Error(result.message || "Failed to add gallery items");
+      }
     } catch (error) {
-      message.error("Something went wrong. Please try again.");
+      console.error("Error adding gallery items:", error);
+      message.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const uploadProps = {
+    fileList,
+    onChange: ({ fileList }) => setFileList(fileList),
+    beforeUpload: () => false,
+    listType: "picture-card",
+    accept: "image/*",
+    multiple: true,
+    onRemove: (file) => {
+      const newFileList = fileList.filter((item) => item.uid !== file.uid);
+      setFileList(newFileList);
+      return true;
+    },
+  };
+
   return (
     <div className="manage-gallery-page">
+      {contextHolder}
       <div className="manage-gallery-container">
         <div className="page-header">
           <div>
             <h1 className="page-title">Manage Gallery</h1>
-            <p className="page-subtitle">Upload and manage project galleries</p>
+            <p className="page-subtitle">
+              Manage project galleries - Showing {projectsWithGallery.length}{" "}
+              projects with gallery items
+            </p>
           </div>
           <Button
             type="primary"
@@ -251,7 +285,7 @@ const ManageGallery = () => {
             size="large"
             className="create-btn"
           >
-            Add Gallery
+            Add Gallery Items
           </Button>
         </div>
 
@@ -264,13 +298,15 @@ const ManageGallery = () => {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} galleries`,
+              showTotal: (total) =>
+                `Total ${total} gallery items across ${projectsWithGallery.length} projects`,
             }}
+            loading={isLoading}
           />
         </div>
 
         <Modal
-          title={editingGallery ? "Edit Gallery" : "Create New Gallery"}
+          title="Add Gallery Items"
           open={isModalOpen}
           onCancel={handleModalClose}
           footer={null}
@@ -295,60 +331,62 @@ const ManageGallery = () => {
                   <Select
                     placeholder="Choose project"
                     size="large"
-                    options={mockProjects?.map((project) => {
-                      return {
-                        value: project.id,
-                        label: project.name,
-                      };
-                    })}
+                    options={dropdownData?.data || []}
+                    loading={!dropdownData}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Gallery Title"
-                  name="galleryTitle"
-                  rules={[
-                    { required: true, message: "Please enter gallery title" },
-                  ]}
+                  label="Title"
+                  name="title"
+                  rules={[{ required: true, message: "Please enter title" }]}
                 >
-                  <Input placeholder="Enter Gallery Name" size="large" />
+                  <Input placeholder="Enter title" size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Gallery Type"
-                  name="galleryType"
-                  rules={[
-                    { required: true, message: "Please enter gallery type" },
-                  ]}
+                  label="Category"
+                  name="category"
+                  rules={[{ required: true, message: "Please enter category" }]}
                 >
-                  <Input placeholder="Enter Gallery Type" size="large" />
+                  <Input placeholder="Enter category" size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
                 <Form.Item
-                  label="Upload Images"
-                  name="images"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => {
-                    if (Array.isArray(e)) return e;
-                    return e?.fileList;
-                  }}
+                  label="Upload Media Files"
+                  required
+                  rules={[
+                    {
+                      validator: () => {
+                        if (fileList.length === 0) {
+                          return Promise.reject(
+                            new Error("Please upload at least one file")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
                 >
-                  <Upload
-                    listType="picture-card"
-                    beforeUpload={() => false}
-                    multiple
-                  >
-                    <div>
-                      <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
+                  <Upload {...uploadProps}>
+                    {fileList.length >= 10 ? null : (
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload</div>
+                      </div>
+                    )}
                   </Upload>
+                  <div
+                    style={{ marginTop: 8, color: "#666", fontSize: "12px" }}
+                  >
+                    Upload images or videos. Multiple files allowed.
+                  </div>
                 </Form.Item>
               </Col>
             </Row>
@@ -364,7 +402,7 @@ const ManageGallery = () => {
                   loading={loading}
                   size="large"
                 >
-                  {editingGallery ? "Update Gallery" : "Create Gallery"}
+                  Add Gallery Items
                 </Button>
               </Space>
             </Form.Item>
