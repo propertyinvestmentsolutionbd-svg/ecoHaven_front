@@ -3,17 +3,39 @@ import CommonPage from "@/components/common/CommonPage";
 import Image from "next/image";
 import React from "react";
 import "./contact.css";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
+import { useAddContactsMutation } from "@/redux/api/contactApi";
+import { toast } from "react-toastify";
 
 export default function Contact() {
   const [form] = Form.useForm();
+  const [addContacts, { isLoading }] = useAddContactsMutation();
 
-  const onFinish = (values) => {
-    console.log("Form values:", values);
-    message.success("Form submitted successfully!");
-    form.resetFields();
+  const onFinish = async (values) => {
+    try {
+      console.log("Form values:", values);
+
+      // Prepare the data for your API
+      const contactData = {
+        name: values.name,
+        email: values.email,
+        message: values.message,
+        phone: values.phone || "", // Optional phone field
+      };
+
+      // Send data to backend
+      const response = await addContacts(contactData).unwrap();
+
+      console.log("Response:", response);
+      toast.success("Message sent successfully!");
+      form.resetFields();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
   };
+
   const openGoogleMaps = () => {
     window.open(
       "https://www.google.com/maps?q=40.71274377933185,-74.00594908459418",
@@ -24,24 +46,14 @@ export default function Contact() {
   return (
     <CommonPage>
       <section className="contact-image-container">
-        <Image
-          src="/contact.png" // replace with your actual image path
-          alt="About Us Background"
-          fill
-          //   width={100}
-          //   height={100}
-          priority
-          // className="about-image"
-          // style={{
-          //   objectFit: "cover",
-          // }}
-        />
+        <Image src="/contact.png" alt="About Us Background" fill priority />
         <div className="about-overlay"></div>
         <h1 className="about-title">Contact Us</h1>
         <div className="scroll-indicator">
           <div className="triangle"></div>
-        </div>{" "}
+        </div>
       </section>
+
       <section className="contact-form-container">
         <div className="contact-info-section">
           <h2 className="company-title">Eco Haven Ltd.</h2>
@@ -121,6 +133,16 @@ export default function Contact() {
               <Input placeholder="Your Email" size="large" />
             </Form.Item>
 
+            {/* Optional Phone Field */}
+            <Form.Item
+              name="phone"
+              rules={[
+                { max: 50, message: "Phone must be less than 50 characters" },
+              ]}
+            >
+              <Input placeholder="Your Phone (Optional)" size="large" />
+            </Form.Item>
+
             <Form.Item
               name="message"
               rules={[
@@ -144,21 +166,19 @@ export default function Contact() {
                 htmlType="submit"
                 size="large"
                 className="submit-button"
+                loading={isLoading}
                 block
               >
-                Submit
+                {isLoading ? "Sending..." : "Submit"}
               </Button>
             </Form.Item>
           </Form>
         </div>
       </section>
-      {/* Company Name */}
+
       <section className="contact-map">
-        <div
-          className="company-name"
-          style={{ textAlign: "center", margin: "3rem" }}
-        >
-          Office Location
+        <div style={{ textAlign: "center", margin: "3rem" }}>
+          <h2>Office Location</h2>
         </div>
         <div className="full-width-map">
           <div className="map-container">
@@ -170,10 +190,9 @@ export default function Contact() {
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Digitmark Creative Location"
+              title="Eco Haven Location"
             />
 
-            {/* Map Overlay */}
             <div className="map-overlay" onClick={openGoogleMaps}>
               <div className="overlay-content">
                 <EnvironmentOutlined className="pin-icon" />

@@ -64,6 +64,8 @@
 
 .message-cell {
   line-height: 1.4;
+    max-width: 300px;
+
   word-wrap: break-word;
 }
 
@@ -74,12 +76,50 @@
   border-radius: 4px;
 }
 
+.detail-row {
+  display: flex;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.detail-row label {
+  font-weight: 600;
+  min-width: 80px;
+  margin-right: 16px;
+  color: #666;
+}
+
+.detail-row.full-width {
+  flex-direction: column;
+}
+
+.detail-row.full-width label {
+  margin-bottom: 8px;
+}
+
+.message-content {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .manage-contacts-page {
     padding: 16px;
   }
-
+  .detail-row {
+    flex-direction: column;
+  }
+  
+  .detail-row label {
+    margin-bottom: 4px;
+  }
   .contacts-header {
     flex-direction: column;
     align-items: flex-start;
