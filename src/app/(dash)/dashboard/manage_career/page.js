@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -23,69 +23,34 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 
 import "./ManageCareers.css";
+import {
+  useAddCareerMutation,
+  useGetCareersQuery,
+  useRemoveCareerMutation,
+  useUpdateCareerMutation,
+} from "@/redux/api/careerApi";
+import { toast } from "react-toastify";
+import moment from "moment";
+import dayjs from "dayjs";
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
   loading: () => <div>Loading editor...</div>,
 });
 export default function ManageCareers() {
-  const mockCareers = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      description:
-        "<p>We are looking for a skilled Frontend Developer to join our team. You will be responsible for building responsive web applications using modern technologies.</p><ul><li>Develop and maintain web applications</li><li>Collaborate with design and backend teams</li><li>Write clean, maintainable code</li></ul>",
-      type: "full-time",
-      deadline: "2024-02-28",
-      redirectLink: "https://company.com/careers/frontend-dev",
-      status: "active",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "UX/UI Designer",
-      description:
-        "<p>Join our design team to create beautiful and intuitive user experiences. We need someone passionate about user-centered design.</p><ul><li>Create wireframes and prototypes</li><li>Conduct user research</li><li>Collaborate with development team</li></ul>",
-      type: "full-time",
-      deadline: "2024-03-15",
-      redirectLink: "https://company.com/careers/ux-designer",
-      status: "active",
-      createdAt: "2024-01-10",
-    },
-    {
-      id: 3,
-      title: "Summer Intern - Marketing",
-      description:
-        "<p>Great opportunity for students to gain real-world marketing experience. Paid internship with potential for full-time offer.</p><ul><li>Assist with social media campaigns</li><li>Content creation and scheduling</li><li>Market research and analysis</li></ul>",
-      type: "internship",
-      deadline: "2024-02-15",
-      redirectLink: "https://company.com/careers/marketing-intern",
-      status: "active",
-      createdAt: "2024-01-08",
-    },
-    {
-      id: 4,
-      title: "DevOps Engineer",
-      description:
-        "<p>Looking for a DevOps Engineer to streamline our deployment processes and improve infrastructure reliability.</p><ul><li>Manage cloud infrastructure</li><li>Implement CI/CD pipelines</li><li>Monitor system performance</li></ul>",
-      type: "contract",
-      deadline: "2024-01-31",
-      redirectLink: "https://company.com/careers/devops",
-      status: "expired",
-      createdAt: "2023-12-20",
-    },
-  ];
-  const moment = {
-    format: (date, format) => date,
-    isBefore: (date, unit) => new Date(date) < new Date(),
-    startOf: (unit) => new Date(new Date().setHours(0, 0, 0, 0)),
-  };
-  const [careers, setCareers] = useState(mockCareers);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingCareer, setEditingCareer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [description, setDescription] = useState("");
+  const { data: careersData, refetch, isLoading } = useGetCareersQuery();
+  const [removeCareer] = useRemoveCareerMutation();
+  const [addCareer] = useAddCareerMutation();
+  const [updateCareer] = useUpdateCareerMutation();
+  const [modal, contextHolder] = Modal.useModal();
+
+  // Use actual data from API
+  const careers = careersData?.data || [];
 
   const careerTypes = [
     { value: "full-time", label: "Full Time" },
@@ -104,7 +69,10 @@ export default function ManageCareers() {
       render: (title, record) => (
         <div className="job-title-cell">
           <div className="job-title">{title}</div>
-          <div className="job-type">{record.type}</div>
+          <div className="job-type">
+            {careerTypes.find((t) => t.value === record.type)?.label ||
+              record.type}
+          </div>
         </div>
       ),
     },
@@ -117,7 +85,7 @@ export default function ManageCareers() {
         <div
           className="description-preview"
           dangerouslySetInnerHTML={{
-            __html: description.substring(0, 100) + "...",
+            __html: description?.substring(0, 100) + "..." || "",
           }}
         />
       ),
@@ -173,7 +141,7 @@ export default function ManageCareers() {
       width: 100,
       render: (status) => (
         <span className={`status-badge status-${status}`}>
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+          {status?.charAt(0)?.toUpperCase() + status?.slice(1) || "Active"}
         </span>
       ),
     },
@@ -222,7 +190,6 @@ export default function ManageCareers() {
     "underline",
     "strike",
     "list",
-    "bullet",
     "indent",
     "link",
     "image",
@@ -230,23 +197,37 @@ export default function ManageCareers() {
 
   const handleEdit = (career) => {
     setEditingCareer(career);
-    setDescription(career.description);
+    setDescription(career.description || "");
     form.setFieldsValue({
       title: career.title,
       type: career.type,
-      deadline: career.deadline ? moment(career.deadline) : null,
+      deadline: career.deadline ? dayjs(career.deadline) : null,
       redirectLink: career.redirectLink,
     });
     setIsModalVisible(true);
   };
 
-  const handleDelete = (id) => {
-    Modal.confirm({
+  const handleDelete = async (id) => {
+    modal.confirm({
       title: "Are you sure you want to delete this career posting?",
       content: "This action cannot be undone.",
-      onOk() {
-        setCareers(careers.filter((career) => career.id !== id));
-        message.success("Career posting deleted successfully");
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      async onOk() {
+        try {
+          const result = await removeCareer(id).unwrap();
+
+          if (result.success) {
+            refetch();
+            toast.success("Job Post deleted successfully");
+          } else {
+            toast.error(result.message || "Failed to delete Job Post");
+          }
+        } catch (error) {
+          console.log("Error deleting career:", error);
+          toast.error(error?.data?.message || "Failed to delete Job Post");
+        }
       },
     });
   };
@@ -272,41 +253,39 @@ export default function ManageCareers() {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       const careerData = {
-        ...values,
+        title: values.title,
         description: description,
+        type: values.type,
         deadline: values.deadline ? values.deadline.format("YYYY-MM-DD") : null,
-        status:
-          values.deadline && values.deadline.isBefore(moment(), "day")
-            ? "expired"
-            : "active",
-        createdAt: editingCareer
-          ? editingCareer.createdAt
-          : new Date().toISOString().split("T")[0],
+        redirectLink: values.redirectLink,
       };
 
+      let result;
+
       if (editingCareer) {
-        setCareers(
-          careers.map((career) =>
-            career.id === editingCareer.id
-              ? { ...career, ...careerData }
-              : career
-          )
-        );
-        message.success("Career posting updated successfully");
-      } else {
-        const newCareer = {
-          id: careers.length + 1,
+        result = await updateCareer({
+          id: editingCareer.id,
           ...careerData,
-        };
-        setCareers([...careers, newCareer]);
-        message.success("Career posting created successfully");
+        }).unwrap();
+      } else {
+        result = await addCareer(careerData).unwrap();
       }
-      handleModalClose();
+
+      if (result.success) {
+        refetch();
+        toast.success(result.message);
+        handleModalClose();
+      } else {
+        throw new Error(result.message);
+      }
     } catch (error) {
-      message.error("Failed to save career posting. Please try again.");
+      console.error("Error saving career:", error);
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Failed to save career posting"
+      );
     } finally {
       setLoading(false);
     }
@@ -330,6 +309,8 @@ export default function ManageCareers() {
 
   return (
     <div className="manage-careers-page">
+      {contextHolder}
+
       <div className="manageCareer-header">
         <div className="header-content">
           <Typography.Title level={2} className="manageCareer-title">
@@ -363,6 +344,7 @@ export default function ManageCareers() {
             }}
             scroll={{ x: 1200 }}
             className="careers-table"
+            loading={isLoading}
           />
         </Card>
       </div>
