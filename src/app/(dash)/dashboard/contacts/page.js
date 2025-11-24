@@ -181,12 +181,8 @@ const ManageContacts = () => {
           <span className="total-contacts">
             Total Contacts: {contacts.length}
           </span>
-          <span className="unread-contacts">
-            Unread: {contacts.filter((contact) => !contact.read).length}
-          </span>
           <span className="pending-contacts">
-            Pending Reply:{" "}
-            {contacts.filter((contact) => !contact.replied).length}
+            Unread: {contacts.filter((contact) => !contact.read).length}
           </span>
         </div>
       </div>
