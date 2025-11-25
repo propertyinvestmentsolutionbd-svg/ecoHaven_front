@@ -1,47 +1,30 @@
 import React, { useRef } from "react";
 import { Carousel } from "antd";
 import Image from "next/image";
+import { useAllGalleryQuery } from "@/redux/api/projectApi";
 
 const GalleriesSection = () => {
   const carouselRef = useRef(null);
+  const { data } = useAllGalleryQuery();
 
-  // Sample gallery images - replace with actual images
-  const galleryImages = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800",
-      alt: "Team meeting",
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800",
-      alt: "Office workspace",
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800",
-      alt: "Team collaboration",
-    },
-    {
-      id: 4,
-      url: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800",
-      alt: "Business meeting",
-    },
-    {
-      id: 5,
-      url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800",
-      alt: "Team photo",
-    },
-  ];
+  console.log({ data });
+
+  // Use actual data from API, fallback to empty array if no data
+  const galleryImages =
+    data?.data?.map((item) => ({
+      id: item.id,
+      url: `http://localhost:5000${item?.imageUrl}`, // Using imageUrl from API response
+      alt: item.title || "Gallery image", // Using title from API response as alt text
+    })) || [];
 
   const carouselSettings = {
     autoplay: true,
-    autoplaySpeed: 2000, // 3 seconds - customize as needed
+    autoplaySpeed: 2000,
     speed: 300,
     slidesToShow: 3,
     centerMode: true,
     centerPadding: "0px",
-    infinite: true,
+    infinite: galleryImages.length > 1, // Only infinite if we have more than 1 image
     dots: false,
     arrows: false,
     responsive: [
@@ -71,6 +54,20 @@ const GalleriesSection = () => {
     ],
   };
 
+  // Handle case when there's no data
+  if (!data?.data || galleryImages.length === 0) {
+    return (
+      <section className="galleries-section">
+        <div className="galleries-container">
+          <h2 className="galleries-title">Galleries</h2>
+          <div className="no-images-message">
+            <p>No gallery images available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="galleries-section">
       <div className="galleries-container">
@@ -89,6 +86,10 @@ const GalleriesSection = () => {
                     alt={image.alt}
                     className="gallery-image"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    // Add proper image optimization
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                   />
                 </div>
               </div>

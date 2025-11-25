@@ -59,6 +59,21 @@ const projectApi = baseApi.injectEndpoints({
       //   };
       // },
     }),
+    allGallery: build.query({
+      query: () => {
+        return {
+          url: `/project/all-gallery`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+      // transformResponse: (response: IService[], meta: IMeta) => {
+      //   return {
+      //     services: response,
+      //     meta,
+      //   };
+      // },
+    }),
     removeProject: build.mutation({
       query: (id) => ({
         url: `/project/${id}`,
@@ -80,4 +95,5 @@ export const {
   useRemoveProjectMutation,
   useGetProjectDropDownQuery,
   useRemoveProjectGalleryItemMutation,
+  useAllGalleryQuery,
 } = projectApi;

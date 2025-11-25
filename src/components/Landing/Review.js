@@ -4,66 +4,60 @@ import React, { useEffect, useState, useRef } from "react";
 import { Carousel, Skeleton } from "antd";
 import Image from "next/image";
 import { FaGreaterThan } from "react-icons/fa";
+import { useGetReviewsQuery } from "@/redux/api/reviewsApi";
 
 export default function ReviewSection() {
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
   const carouselRef = useRef();
 
+  // Use RTK Query with proper error handling
+  const { data: reviewsData, isLoading, error, isError } = useGetReviewsQuery();
+
+  // Transform API data to component format
+  const transformedReviews = React.useMemo(() => {
+    if (!reviewsData?.success || !reviewsData.data) return [];
+
+    return reviewsData.data.map((review) => ({
+      id: review.id,
+      name: review.reviewerName,
+      title: review.type || "Customer", // Fallback if type is null
+      review: review.description,
+      mediaType: "image",
+      media: review.imageUrl
+        ? `http://localhost:5000${review.imageUrl}`
+        : "/default-review.jpg", // Fallback image
+      imageUrl: review.imageUrl, // Keep original for conditional rendering
+    }));
+  }, [reviewsData]);
+
+  // Update reviews when transformed data changes
   useEffect(() => {
-    // Replace with your real API fetch
-    fetch("/api/reviews")
-      .then((res) => res.json())
-      .then((data) => {
-        setReviews([
-          {
-            id: 1,
-            name: "Dr. Abdullah Al Jahangir",
-            title: "Respected Landowner",
-            review:
-              "When we decided to partner with a developer, the initial step of trusting them with our land felt like the biggest hurdle. Eco Haven quickly put those fears to rest.",
-            mediaType: "image",
-            media: "/review1.jpg",
-          },
-          {
-            id: 2,
-            name: "Mr. Hasan Mahmud",
-            title: "Apartment Owner",
-            review:
-              "The entire journey with Eco Haven was smooth. They delivered more than what was promised.",
-            mediaType: "video",
-            media: "/review2.mp4",
-          },
-        ]);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-        setReviews([
-          {
-            id: 1,
-            name: "Dr. Abdullah Al Jahangir",
-            title: "Respected Landowner",
-            review:
-              "When we decided to partner with a developer, the initial step of trusting them with our land felt like the biggest hurdle. Eco Haven quickly put those fears to rest.",
-            mediaType: "image",
-            media: "/review1.jpg",
-          },
-          {
-            id: 2,
-            name: "Mr. Hasan Mahmud",
-            title: "Apartment Owner",
-            review:
-              "The entire journey with Eco Haven was smooth. They delivered more than what was promised.",
-            mediaType: "video",
-            media: "/review2.mp4",
-          },
-        ]);
-      });
-  }, []);
+    setReviews(transformedReviews);
+  }, [transformedReviews]);
 
   const next = () => carouselRef.current?.next();
   const prev = () => carouselRef.current?.prev();
+
+  // Show error state
+  if (isError) {
+    return (
+      <section className="review-section">
+        <div className="review-header">
+          <h2>
+            <span className="line-break">
+              <span className="highlight">REVIEW</span> From Our{" "}
+            </span>
+            <span className="line-break">
+              Beloved <span className="highlight">CUSTOMERS</span>
+            </span>
+          </h2>
+        </div>
+        <div className="error-state">
+          <p>Failed to load reviews. Please try again later.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="review-section">
@@ -78,7 +72,7 @@ export default function ReviewSection() {
         </h2>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="review-skeleton">
           <div className="review-skeleton-text">
             <Skeleton active paragraph={{ rows: 3 }} title={false} />
@@ -88,7 +82,9 @@ export default function ReviewSection() {
           </div>
         </div>
       ) : reviews.length === 0 ? (
-        <p>No reviews available.</p>
+        <div className="no-reviews">
+          <p>No reviews available at the moment. Check back later!</p>
+        </div>
       ) : (
         <div
           className={`review-container ${
@@ -118,20 +114,19 @@ export default function ReviewSection() {
                   </div>
 
                   <div className="review-media">
-                    {item.mediaType === "video" ? (
-                      <video
-                        src={item.media}
-                        controls
-                        className="review-media-box"
-                      />
-                    ) : (
+                    {item.imageUrl ? (
                       <Image
                         src={item.media}
-                        alt={item.name}
+                        alt={`Review from ${item.name}`}
                         width={400}
                         height={400}
                         className="review-media-box"
+                        priority={index === 0}
                       />
+                    ) : (
+                      <div className="no-image-placeholder">
+                        <p>No Image Available</p>
+                      </div>
                     )}
                   </div>
                 </div>
