@@ -44,6 +44,21 @@ const projectApi = baseApi.injectEndpoints({
       //   };
       // },
     }),
+    getProjectLocationDropDown: build.query({
+      query: () => {
+        return {
+          url: `/projects/location/dropdown`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+      // transformResponse: (response: IService[], meta: IMeta) => {
+      //   return {
+      //     services: response,
+      //     meta,
+      //   };
+      // },
+    }),
     allProjects: build.query({
       query: () => {
         return {
@@ -96,4 +111,5 @@ export const {
   useGetProjectDropDownQuery,
   useRemoveProjectGalleryItemMutation,
   useAllGalleryQuery,
+  useGetProjectLocationDropDownQuery,
 } = projectApi;
