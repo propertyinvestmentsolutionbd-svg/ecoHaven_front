@@ -6,55 +6,87 @@ import React, { useState } from "react";
 import "./management.css";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Carousel, Modal, Row, Col } from "antd";
+import { useAllUsersQuery } from "@/redux/api/userApi";
 
 export default function Management() {
+  const { data } = useAllUsersQuery();
+
+  // Use actual data from API
+  const users = data?.data?.users || [];
+
+  // Find featured employee (first employee with isFeatured: true)
+  const featuredEmployeeFromApi = users.find(
+    (user) => user.isFeatured === true
+  );
+
+  // Get all employees (users with role "employee")
+  // const employeesFromApi = users.filter((user) => user.role === "employee");
+
+  // Featured employee with fallbacks
   const featuredEmployee = {
-    name: "Abdul Karim",
-    role: "Managing Director",
-    image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+    name: featuredEmployeeFromApi?.name || "Managing Director",
+    role: featuredEmployeeFromApi?.profileDescription
+      ? "Managing Director"
+      : "Managing Director",
+    image: featuredEmployeeFromApi?.profileImg
+      ? `http://localhost:5000${featuredEmployeeFromApi?.profileImg}`
+      : "/dummy.jpg",
     description:
+      featuredEmployeeFromApi?.profileDescription ||
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
   };
 
-  const employees = [
+  // Transform API employees to match the expected format
+  const employees = users.map((user, index) => ({
+    id: user.id,
+    name: user.name || "Employee",
+    role: user.profileDescription ? "Employee" : "Team Member",
+    image: user.profileImg
+      ? `http://localhost:5000${user.profileImg}`
+      : "/dummy.jpg",
+    description:
+      user.profileDescription ||
+      "Dedicated professional committed to organizational success and excellence.",
+    // Include original user data for modal if needed
+    originalData: user,
+  }));
+
+  // Fallback employees if no employees from API
+  const fallbackEmployees = [
     {
       id: 1,
       name: "Abdullah Khan",
-      role: "Ceo, Director",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+      role: "CEO, Director",
+      image: "/dummy.jpg",
       description:
-        "Experienced leader with a passion for innovation and growth. Read more...",
+        "Experienced leader with a passion for innovation and growth.",
     },
     {
       id: 2,
-      name: "Abdullah Khan",
-      role: "Ceo, Director",
-      image:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
-      description:
-        "Dedicated professional focused on delivering excellence. Read more...",
+      name: "Team Member",
+      role: "Professional",
+      image: "/dummy.jpg",
+      description: "Dedicated professional focused on delivering excellence.",
     },
     {
       id: 3,
-      name: "Abdullah Khan",
-      role: "Ceo, Director",
-      image:
-        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80",
-      description:
-        "Strategic thinker committed to organizational success. Read more...",
+      name: "Team Member",
+      role: "Specialist",
+      image: "/dummy.jpg",
+      description: "Strategic thinker committed to organizational success.",
     },
     {
       id: 4,
-      name: "Abdullah Khan",
-      role: "Ceo, Director",
-      image:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
-      description:
-        "Results-driven expert with proven track record. Read more...",
+      name: "Team Member",
+      role: "Expert",
+      image: "/dummy.jpg",
+      description: "Results-driven expert with proven track record.",
     },
   ];
+
+  // Use API employees or fallback
+  const displayEmployees = employees.length > 0 ? employees : fallbackEmployees;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState();
 
@@ -80,27 +112,26 @@ export default function Management() {
       )}
     </button>
   );
+
   return (
     <CommonPage>
       <section className="management-image-container">
         <Image
-          src="/management.png" // replace with your actual image path
-          alt="About Us Background"
+          src="/management.png"
+          alt="Management Background"
           fill
-          //   width={100}
-          //   height={100}
           priority
-          // className="about-image"
-          // style={{
-          //   objectFit: "cover",
-          // }}
+          style={{
+            objectFit: "cover",
+          }}
         />
         <div className="about-overlay"></div>
         <h1 className="about-title">Management</h1>
         <div className="scroll-indicator">
           <div className="triangle"></div>
-        </div>{" "}
+        </div>
       </section>
+
       <section>
         <div className="team-section">
           {/* Featured Employee */}
@@ -109,22 +140,19 @@ export default function Management() {
               <Col xs={24} md={10} lg={8}>
                 <div className="featured-image-wrapper">
                   <Image
-                    src={featuredEmployee.image} // replace with your actual image path
-                    alt="About Us Background"
-                    // fill
-                    width={2000}
-                    height={2000}
-                    priority
-                    className="featured-image"
-                    // style={{
-                    //   objectFit: "cover",
-                    // }}
-                  />
-                  {/* <img
                     src={featuredEmployee.image}
                     alt={featuredEmployee.name}
+                    width={400}
+                    height={400}
+                    priority
                     className="featured-image"
-                  /> */}
+                    style={{
+                      objectFit: "cover",
+                    }}
+                    onError={(e) => {
+                      e.target.src = "/dummy.jpg";
+                    }}
+                  />
                 </div>
               </Col>
               <Col xs={24} md={14} lg={16}>
@@ -143,23 +171,23 @@ export default function Management() {
           <div className="employee-carousel-section">
             <Carousel
               dots={false}
-              slidesToShow={4}
+              slidesToShow={Math.min(4, displayEmployees.length)}
               slidesToScroll={1}
-              arrows
+              arrows={displayEmployees.length > 1}
               prevArrow={<CustomArrow direction="left" />}
               nextArrow={<CustomArrow direction="right" />}
               responsive={[
                 {
                   breakpoint: 1200,
                   settings: {
-                    slidesToShow: 3,
+                    slidesToShow: Math.min(3, displayEmployees.length),
                     slidesToScroll: 1,
                   },
                 },
                 {
                   breakpoint: 768,
                   settings: {
-                    slidesToShow: 2,
+                    slidesToShow: Math.min(2, displayEmployees.length),
                     slidesToScroll: 1,
                   },
                 },
@@ -172,7 +200,7 @@ export default function Management() {
                 },
               ]}
             >
-              {employees.map((employee) => (
+              {displayEmployees.map((employee) => (
                 <div key={employee.id} className="employee-slide">
                   <div
                     className="employee-card"
@@ -180,16 +208,18 @@ export default function Management() {
                   >
                     <div className="employee-image-wrapper">
                       <Image
-                        src={employee.image} // replace with your actual image path
-                        alt="About Us Background"
-                        // fill
-                        width={2000}
-                        height={2000}
+                        src={employee.image}
+                        alt={employee.name}
+                        width={300}
+                        height={300}
                         priority
                         className="employee-image"
-                        // style={{
-                        //   objectFit: "cover",
-                        // }}
+                        style={{
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.src = "/dummy.jpg";
+                        }}
                       />
                     </div>
                     <div className="employee-info">
@@ -215,15 +245,19 @@ export default function Management() {
             {selectedEmployee && (
               <div className="modal-content">
                 <Image
-                  src={selectedEmployee.image} // replace with your actual image path
-                  alt="About Us Background"
-                  // fill
-                  width={2000}
-                  height={2000}
+                  src={selectedEmployee.image}
+                  alt={selectedEmployee.name}
+                  width={200}
+                  height={200}
                   priority
                   className="modal-image"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                  onError={(e) => {
+                    e.target.src = "/dummy.jpg";
+                  }}
                 />
-
                 <h2 className="modal-name">{selectedEmployee.name}</h2>
                 <h3 className="modal-role">{selectedEmployee.role}</h3>
                 <p className="modal-description">
