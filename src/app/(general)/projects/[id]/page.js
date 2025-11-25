@@ -11,36 +11,95 @@ import {
 } from "react-icons/lu";
 import { FaHome } from "react-icons/fa";
 import Image from "next/image";
-
-// Mock data - will be replaced with API response
-const projectData = {
-  title: "Brishti Bilash",
-  heroImage:
-    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
-  galleryImages: [
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&q=80",
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80",
-    "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=400&q=80",
-  ],
-  progress: 90,
-  stats: {
-    type: "Residential Building",
-    apartmentSize: "2,480 Sqft",
-    landArea: "5 Katha",
-    elevator: "1 unit",
-    handover: "2020",
-    stairCase: "1 Unit",
-  },
-  location: {
-    mapImage:
-      "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80",
-    mapUrl: "#",
-  },
-};
+import { useGetProjectsByIdQuery } from "@/redux/api/projectApi";
+import { useParams } from "next/navigation";
+import { useAddContactsMutation } from "@/redux/api/contactApi";
+import { toast } from "react-toastify";
 
 const ProjectDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const params = useParams();
+  const projectId = params.id;
+  const [addContacts, { isLoading: contactLoading }] = useAddContactsMutation();
+
+  const {
+    data: projectData,
+    isLoading,
+    error,
+  } = useGetProjectsByIdQuery(projectId);
+
+  // Use actual API data with fallbacks
+  const project = projectData?.data || {};
+
+  // Get hero image - use first image or fallback to dummy.jpg
+  const getHeroImage = () => {
+    if (project?.images?.[0]?.imageUrl) {
+      return `http://localhost:5000${project.images[0].imageUrl}`;
+    }
+    // Fallback to first gallery image if no main images
+    if (project?.galleryItems?.[0]?.imageUrl) {
+      return `http://localhost:5000${project.galleryItems[0].imageUrl}`;
+    }
+    // Use dummy.jpg as final fallback
+    return "/dummy.jpg";
+  };
+
+  // Get gallery images (first 3 gallery items)
+  const getGalleryImages = () => {
+    if (!project?.galleryItems || project.galleryItems.length === 0) {
+      // Use dummy.jpg for all gallery images if no gallery items
+      return ["/dummy.jpg", "/dummy.jpg", "/dummy.jpg"];
+    }
+
+    // Take first 3 gallery items
+    return project.galleryItems
+      .slice(0, 3)
+      .map((item) =>
+        item.imageUrl ? `http://localhost:5000${item.imageUrl}` : "/dummy.jpg"
+      );
+  };
+
+  // Get thumbnail labels from gallery item titles
+  const getThumbnailLabels = () => {
+    if (!project?.galleryItems || project.galleryItems.length === 0) {
+      return ["Bedroom", "Dining", "View"]; // Default labels
+    }
+
+    const labels = project.galleryItems
+      .slice(0, 3)
+      .map((item) => item.title || "Gallery");
+
+    // Fill remaining slots with default labels if needed
+    while (labels.length < 3) {
+      labels.push(["Bedroom", "Dining", "View"][labels.length]);
+    }
+
+    return labels;
+  };
+
+  // Get project stats with fallbacks
+  const getProjectStats = () => ({
+    type: project.projectType || "Not specified",
+    apartmentSize: project.sizeSqft
+      ? `${project.sizeSqft} Sqft`
+      : "Not specified",
+    landArea: project.landArea || "Not specified",
+    elevator: "1 unit", // Default value since not in API
+    handover: project.completionYear?.toString() || "Not specified",
+    stairCase: "1 Unit", // Default value since not in API
+  });
+
+  // Get progress percentage with fallback
+  const getProgressPercentage = () => {
+    return project.progressPercentage || 0;
+  };
+
+  // Get map image with fallback
+  const getMapImage = () => {
+    // You might want to use a static map image or another fallback
+    return "/dummy.jpg";
+  };
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -51,38 +110,129 @@ const ProjectDetails = () => {
     form.resetFields();
   };
 
-  const handleSubmit = (values) => {
-    console.log("Form values:", values);
-    // message.success("Thank you! Your brochure is downloading...");
+  const handleSubmit = async (values) => {
+    try {
+      console.log("Form values:", values);
 
-    // Simulate file download
-    // const link = document.createElement("a");
-    // link.href = "#"; // Replace with actual file URL from API
-    // link.download = "project-brochure.pdf";
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+      // Prepare the data for your API
+      const contactData = {
+        name: values.name,
+        email: values.email,
+        message: "",
+        phone: values.mobile || "",
+      };
 
-    setIsModalVisible(false);
-    form.resetFields();
+      // Send data to backend
+      const response = await addContacts(contactData).unwrap();
+
+      console.log("Response:", response);
+      toast.success("Message sent successfully!");
+
+      // Check if brochure URL exists and trigger download
+      if (project?.brochureUrl) {
+        try {
+          let downloadUrl = project.brochureUrl;
+
+          // Convert Google Drive view link to direct download link
+          if (project.brochureUrl.includes("drive.google.com")) {
+            // Extract file ID from Google Drive URL
+            const fileIdMatch = project.brochureUrl.match(/[-\w]{25,}/);
+            if (fileIdMatch) {
+              const fileId = fileIdMatch[0];
+              downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+          }
+
+          // Create a temporary anchor element to trigger download
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.download = "project-brochure.pdf"; // Force download with a filename
+
+          // Append to body, click, and remove
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          toast.success("Brochure download started!");
+        } catch (downloadError) {
+          console.error("Error triggering download:", downloadError);
+          // Fallback: open in new tab
+          window.open(project.brochureUrl, "_blank");
+          toast.info("Opening brochure in new tab...");
+        }
+      } else {
+        toast.success("Form submitted successfully!");
+      }
+
+      form.resetFields();
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="project-details-page">
+        <div className="loading-state">Loading project details...</div>
+      </div>
+    );
+  }
+  if (contactLoading) {
+    return (
+      <div className="project-details-page">
+        <div className="loading-state">Sending Request...</div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="project-details-page">
+        <div className="error-state">
+          Error loading project details. Please try again.
+        </div>
+      </div>
+    );
+  }
+
+  const heroImage = getHeroImage();
+  const galleryImages = getGalleryImages();
+  const thumbnailLabels = getThumbnailLabels();
+  const projectStats = getProjectStats();
+  const progressPercentage = getProgressPercentage();
+  const mapImage = getMapImage();
 
   return (
     <div className="project-details-page">
       {/* Hero Section */}
       <section
         className="projectDetails-section"
-        style={{ backgroundImage: `url(${projectData.heroImage})` }}
+        style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="projectDetails-overlay">
           <div className="projectDetails-content">
-            <h1 className="project-title">{projectData.title}</h1>
+            <h1 className="project-title">{project.name || "Project Name"}</h1>
             <div className="gallery-thumbnails">
-              {projectData.galleryImages.map((img, index) => (
+              {galleryImages.map((img, index) => (
                 <div key={index} className="thumbnail">
-                  <Image src={img} alt={`Gallery ${index + 1}`} fill />
+                  <Image
+                    src={img}
+                    alt={`Gallery ${index + 1}`}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    onError={(e) => {
+                      // Fallback to dummy.jpg if image fails to load
+                      e.target.src = "/dummy.jpg";
+                    }}
+                  />
                   <div className="thumbnail-label">
-                    {index === 0 ? "Bedroom" : index === 1 ? "Dining" : "View"}
+                    {thumbnailLabels[index]}
                   </div>
                 </div>
               ))}
@@ -109,14 +259,14 @@ const ProjectDetails = () => {
                       style={{
                         strokeDasharray: `${2 * Math.PI * 54}`,
                         strokeDashoffset: `${
-                          2 * Math.PI * 54 * (1 - projectData.progress / 100)
+                          2 * Math.PI * 54 * (1 - progressPercentage / 100)
                         }`,
                       }}
                     />
                   </svg>
                   <div className="progress-text">
                     <span className="progress-value">
-                      {projectData.progress}%
+                      {progressPercentage}%
                     </span>
                   </div>
                 </div>
@@ -130,9 +280,7 @@ const ProjectDetails = () => {
                       <LuBuilding2 className="stat-icon" />
                       <div>
                         <div className="stat-label">Type</div>
-                        <div className="stat-value">
-                          {projectData.stats.type}
-                        </div>
+                        <div className="stat-value">{projectStats.type}</div>
                       </div>
                     </div>
                   </Col>
@@ -142,7 +290,7 @@ const ProjectDetails = () => {
                       <div>
                         <div className="stat-label">Apartment Size</div>
                         <div className="stat-value">
-                          {projectData.stats.apartmentSize}
+                          {projectStats.apartmentSize}
                         </div>
                       </div>
                     </div>
@@ -153,7 +301,7 @@ const ProjectDetails = () => {
                       <div>
                         <div className="stat-label">Land Area</div>
                         <div className="stat-value">
-                          {projectData.stats.landArea}
+                          {projectStats.landArea}
                         </div>
                       </div>
                     </div>
@@ -164,7 +312,7 @@ const ProjectDetails = () => {
                       <div>
                         <div className="stat-label">Elevator</div>
                         <div className="stat-value">
-                          {projectData.stats.elevator}
+                          {projectStats.elevator}
                         </div>
                       </div>
                     </div>
@@ -175,7 +323,7 @@ const ProjectDetails = () => {
                       <div>
                         <div className="stat-label">Handover</div>
                         <div className="stat-value">
-                          {projectData.stats.handover}
+                          {projectStats.handover}
                         </div>
                       </div>
                     </div>
@@ -186,7 +334,7 @@ const ProjectDetails = () => {
                       <div>
                         <div className="stat-label">Stair Case</div>
                         <div className="stat-value">
-                          {projectData.stats.stairCase}
+                          {projectStats.stairCase}
                         </div>
                       </div>
                     </div>
@@ -205,13 +353,17 @@ const ProjectDetails = () => {
           <div className="location-card">
             <div className="map-container">
               <Image
-                src={projectData.location.mapImage}
+                src={mapImage}
                 alt="Project Location Map"
                 fill
+                style={{ objectFit: "cover" }}
+                onError={(e) => {
+                  e.target.src = "/dummy.jpg";
+                }}
               />
               <div className="map-overlay">
                 <a
-                  href={projectData.location.mapUrl}
+                  href={project.mapUrl || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="map-button"
@@ -262,7 +414,7 @@ const ProjectDetails = () => {
             name="mobile"
             label="Mobile No:*"
             rules={[
-              { required: true, message: "Please enter your mobile number" },
+              // { required: true, message: "Please enter your mobile number" },
               {
                 pattern: /^[0-9]{10,15}$/,
                 message: "Please enter a valid mobile number",

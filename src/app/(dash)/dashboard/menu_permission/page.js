@@ -134,19 +134,19 @@ const MenuPermissions = () => {
       title: "Menu Name",
       dataIndex: "menuName",
       key: "menuName",
-      width: 250,
+      // width: 120,
     },
-    {
-      title: "Description",
-      dataIndex: "menuDescription",
-      key: "menuDescription",
-      width: 300,
-      render: (description) => description || "-",
-    },
+    // {
+    //   title: "Description",
+    //   dataIndex: "menuDescription",
+    //   key: "menuDescription",
+    //   width: 300,
+    //   render: (description) => description || "-",
+    // },
     {
       title: "Permission",
       key: "permission",
-      width: 120,
+      // width: 50,
       align: "center",
       render: (_, record) => (
         <Checkbox

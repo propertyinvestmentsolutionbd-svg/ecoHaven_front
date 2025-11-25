@@ -87,17 +87,17 @@ const ManageContacts = () => {
       width: 130,
       render: (phone) => phone || "N/A",
     },
-    {
-      title: "Message",
-      dataIndex: "message",
-      key: "message",
-      width: 250,
-      render: (text) => (
-        <div className="message-cell">
-          {text && text.length > 100 ? `${text.substring(0, 100)}...` : text}
-        </div>
-      ),
-    },
+    // {
+    //   title: "Message",
+    //   dataIndex: "message",
+    //   key: "message",
+    //   width: 250,
+    //   render: (text) => (
+    //     <div className="message-cell">
+    //       {text && text.length > 100 ? `${text.substring(0, 100)}...` : text}
+    //     </div>
+    //   ),
+    // },
     {
       title: "Status",
       key: "status",
@@ -110,12 +110,12 @@ const ManageContacts = () => {
           >
             {record.read ? "Read" : "Unread"}
           </Tag>
-          <Tag
+          {/* <Tag
             color={record.replied ? "green" : "orange"}
             icon={record.replied ? <CheckCircleOutlined /> : null}
           >
             {record.replied ? "Replied" : "Pending"}
-          </Tag>
+          </Tag> */}
         </Space>
       ),
     },

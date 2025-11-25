@@ -82,12 +82,15 @@ const projectApi = baseApi.injectEndpoints({
           // params: arg,
         };
       },
-      // transformResponse: (response: IService[], meta: IMeta) => {
-      //   return {
-      //     services: response,
-      //     meta,
-      //   };
-      // },
+    }),
+    getProjectsById: build.query({
+      query: (id) => {
+        return {
+          url: `/project/${id}`,
+          method: "GET",
+          // params: arg,
+        };
+      },
     }),
     removeProject: build.mutation({
       query: (id) => ({
@@ -112,4 +115,5 @@ export const {
   useRemoveProjectGalleryItemMutation,
   useAllGalleryQuery,
   useGetProjectLocationDropDownQuery,
+  useGetProjectsByIdQuery,
 } = projectApi;
