@@ -59,10 +59,26 @@ const userApi = baseApi.injectEndpoints({
       //   };
       // },
     }),
+    getEmpDropdown: build.query({
+      query: () => {
+        return {
+          url: `/employees/dropdown`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+    }),
     removeUser: build.mutation({
       query: (id) => ({
         url: `/${id}`,
         method: "DELETE",
+      }),
+    }),
+    updatePermissions: build.mutation({
+      query: (payload) => ({
+        url: `/menu-permissions/upsert-permissions`,
+        method: "PUT",
+        data: payload,
       }),
     }),
   }),
@@ -77,4 +93,6 @@ export const {
   useUserPassChangeMutation,
   useAllUsersQuery,
   useRemoveUserMutation,
+  useGetEmpDropdownQuery,
+  useUpdatePermissionsMutation,
 } = userApi;

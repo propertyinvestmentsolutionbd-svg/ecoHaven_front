@@ -1,76 +1,66 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Layout, Select, Table, Checkbox, Button, message } from "antd";
+import { Layout, Select, Table, Checkbox, Button } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import "./MenuPermissions.css";
+import { useGetMenuPermissionByUserQuery } from "@/redux/api/permissionApi";
+import {
+  useGetEmpDropdownQuery,
+  useUpdatePermissionsMutation,
+} from "@/redux/api/userApi";
+import { toast } from "react-toastify";
 
 const { Content } = Layout;
-
-// Mock data for employees
-const mockEmployees = [
-  { id: 1, name: "John Doe", email: "john.doe@company.com" },
-  { id: 2, name: "Jane Smith", email: "jane.smith@company.com" },
-  { id: 3, name: "Mike Johnson", email: "mike.johnson@company.com" },
-  { id: 4, name: "Sarah Williams", email: "sarah.williams@company.com" },
-];
-
-// Mock data for all available menus
-const mockMenus = [
-  { id: 1, menuName: "Dashboard", route: "/dashboard", category: "Main" },
-  {
-    id: 2,
-    menuName: "Projects",
-    route: "/dashboard/projects",
-    category: "Main",
-  },
-  { id: 3, menuName: "Gallery", route: "/dashboard/gallery", category: "Main" },
-  { id: 4, menuName: "Blogs", route: "/dashboard/blogs", category: "Main" },
-  { id: 5, menuName: "Add Employee", route: "/employee/add", category: "HR" },
-  { id: 6, menuName: "Profile", route: "/profile", category: "User" },
-  { id: 7, menuName: "Account", route: "/account", category: "User" },
-  {
-    id: 8,
-    menuName: "Menu Permissions",
-    route: "/dashboard/menu-permissions",
-    category: "Admin",
-  },
-];
 
 const MenuPermissions = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [menuPermissions, setMenuPermissions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [initialPermissions, setInitialPermissions] = useState(new Set());
 
-  // Simulate API call to fetch menu permissions for selected employee
-  const fetchMenuPermissions = async (employeeId) => {
-    setLoading(true);
-    try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+  // RTK Query hooks
+  const { data: employeesData, isLoading: loadingEmployees } =
+    useGetEmpDropdownQuery();
+  const {
+    data: permissionsData,
+    isLoading: loadingPermissions,
+    refetch: refetchPermissions,
+  } = useGetMenuPermissionByUserQuery(selectedEmployee, {
+    skip: !selectedEmployee, // Only fetch when employee is selected
+  });
 
-      // Mock: Randomly assign some permissions
-      const permissions = mockMenus.map((menu) => ({
-        ...menu,
-        hasPermission: Math.random() > 0.5,
-      }));
+  const [updatePermissions, { isLoading: saving }] =
+    useUpdatePermissionsMutation();
+
+  // Use actual data from API
+  const employees = employeesData?.data || [];
+
+  // Update menu permissions when permissions data changes
+  useEffect(() => {
+    if (permissionsData?.success && permissionsData.data) {
+      const data = permissionsData.data;
+
+      // Transform the API response to match our table structure
+      const permissions =
+        data.availableMenus?.map((menu) => ({
+          id: menu.menuId,
+          menuName: menu.menuName,
+          menuDescription: menu.menuDescription,
+          hasPermission: menu.isAssigned,
+        })) || [];
 
       setMenuPermissions(permissions);
+
+      // Store initial permissions for change detection
       const permissionSet = new Set(
         permissions.filter((p) => p.hasPermission).map((p) => p.id)
       );
       setInitialPermissions(permissionSet);
-    } catch (error) {
-      message.error("Failed to load menu permissions");
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [permissionsData]);
 
   const handleEmployeeChange = (employeeId) => {
     setSelectedEmployee(employeeId);
-    fetchMenuPermissions(employeeId);
+    // Permissions will be automatically fetched via RTK Query
   };
 
   const handlePermissionChange = (menuId, checked) => {
@@ -83,33 +73,49 @@ const MenuPermissions = () => {
 
   const handleSave = async () => {
     if (!selectedEmployee) {
-      message.warning("Please select an employee first");
+      toast.warning("Please select an employee first");
       return;
     }
 
-    setSaving(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Prepare permissions data for API
+      const permissionsData = menuPermissions.map((menu) => ({
+        menuId: menu.id,
+        canView: menu.hasPermission,
+        canEdit: false, // Set based on your requirements
+        canDelete: false, // Set based on your requirements
+      }));
 
-      const updatedPermissions = menuPermissions.filter((m) => m.hasPermission);
+      const result = await updatePermissions({
+        userId: selectedEmployee,
+        permissions: permissionsData,
+      }).unwrap();
 
-      // In real implementation, send to API:
-      // await updateMenuPermissions(selectedEmployee, updatedPermissions);
+      if (result.success) {
+        toast.success("Menu permissions updated successfully");
 
-      message.success("Menu permissions updated successfully");
+        // Update initial permissions to match current state
+        const permissionSet = new Set(
+          menuPermissions.filter((m) => m.hasPermission).map((m) => m.id)
+        );
+        setInitialPermissions(permissionSet);
 
-      // Update initial permissions to match current state
-      const permissionSet = new Set(updatedPermissions.map((p) => p.id));
-      setInitialPermissions(permissionSet);
+        // Refresh permissions data
+        refetchPermissions();
+      } else {
+        throw new Error(result.message);
+      }
     } catch (error) {
-      message.error("Failed to update permissions");
-    } finally {
-      setSaving(false);
+      console.log("Error saving permissions:", error);
+      toast.error(
+        error?.data?.message || error?.message || "Failed to update permissions"
+      );
     }
   };
 
   const hasChanges = () => {
+    if (!selectedEmployee) return false;
+
     const currentPermissions = new Set(
       menuPermissions.filter((m) => m.hasPermission).map((m) => m.id)
     );
@@ -128,19 +134,14 @@ const MenuPermissions = () => {
       title: "Menu Name",
       dataIndex: "menuName",
       key: "menuName",
-      width: 200,
-    },
-    {
-      title: "Route",
-      dataIndex: "route",
-      key: "route",
       width: 250,
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      width: 150,
+      title: "Description",
+      dataIndex: "menuDescription",
+      key: "menuDescription",
+      width: 300,
+      render: (description) => description || "-",
     },
     {
       title: "Permission",
@@ -175,18 +176,11 @@ const MenuPermissions = () => {
             value={selectedEmployee}
             className="employee-select"
             showSearch
-            options={mockEmployees.map((employee) => {
-              return {
-                value: employee.id,
-                label: employee.name,
-              };
-            })}
-            // optionFilterProp="children"
+            options={employees}
+            loading={loadingEmployees}
             filterOption={(input, option) => {
-              const children = option?.children;
-              return String(children)
-                .toLowerCase()
-                .includes(input.toLowerCase());
+              const label = option?.label || "";
+              return label.toLowerCase().includes(input.toLowerCase());
             }}
           />
         </div>
@@ -198,10 +192,13 @@ const MenuPermissions = () => {
                 columns={columns}
                 dataSource={menuPermissions}
                 rowKey="id"
-                loading={loading}
+                loading={loadingPermissions}
                 pagination={false}
-                scroll={{ x: 720 }}
+                scroll={{ x: 670 }}
                 className="permissions-table"
+                locale={{
+                  emptyText: "No menu permissions found",
+                }}
               />
             </div>
 
