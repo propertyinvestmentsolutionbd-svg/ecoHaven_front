@@ -22,6 +22,7 @@ import { MdManageAccounts } from "react-icons/md";
 
 import "./dashboard/Dashboard.css";
 import { getMenus, getUserInfo } from "@/utils/helper";
+import { useDashboardRouteProtection } from "@/components/common/useDashboardRouteProtection";
 
 const { Sider, Content } = Layout;
 
@@ -52,7 +53,7 @@ export default function DashboardLayout({ children }) {
     MenuFoldOutlined: <MenuFoldOutlined />,
     MenuUnfoldOutlined: <MenuUnfoldOutlined />,
   };
-
+  useDashboardRouteProtection();
   useEffect(() => {
     setMounted(true);
 
