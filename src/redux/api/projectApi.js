@@ -1,6 +1,6 @@
 import { baseApi } from "./baseApi";
 
-const userApi = baseApi.injectEndpoints({
+const projectApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // userPassChange: build.mutation({
     //   query: (payload) => ({
@@ -80,4 +80,4 @@ export const {
   useRemoveProjectMutation,
   useGetProjectDropDownQuery,
   useRemoveProjectGalleryItemMutation,
-} = userApi;
+} = projectApi;
