@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Alert } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import "./login.css";
@@ -16,8 +16,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userLogin] = useUserLoginMutation();
-  const data = getUserInfo();
-  console.log({ data });
+  useEffect(() => {
+    const userInfo = getUserInfo();
+    if (userInfo?.userId) {
+      router.replace("/");
+    }
+  }, []);
+
   const onFinish = async (values) => {
     setLoading(true);
     setError("");

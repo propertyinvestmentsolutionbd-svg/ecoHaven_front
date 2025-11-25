@@ -1,18 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
-import { Input, Drawer } from "antd";
+import React, { useEffect, useState } from "react";
+import { Input, Drawer, Button } from "antd";
 import { SearchOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import "./Header.css";
 import Link from "next/link";
+import { getUserInfo, removeUserInfo } from "@/utils/helper";
 
 export default function Header() {
   const [searchVisible, setSearchVisible] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   const showDrawer = () => setDrawerOpen(true);
   const closeDrawer = () => setDrawerOpen(false);
+
+  useEffect(() => {
+    const userInfo = getUserInfo();
+    setUser(userInfo);
+  }, []);
+
+  console.log({ user });
 
   return (
     <header className={"header"}>
@@ -31,13 +40,27 @@ export default function Header() {
         <Link href="/design_philosophy">Design Philosophy</Link>
         <Link href="/career">Career</Link>
         <Link href="/nrb">NRB</Link>
+        {user?.userId && <Link href="/dashboard">Dashboard</Link>}
       </nav>
 
       {/* Right - Login and Search */}
       <div className={"rightSection"}>
-        <Link href="/login" className={"loginBtn"}>
-          Login
-        </Link>
+        {!user?.userId ? (
+          <Link href="/login" className={"loginBtn"}>
+            Login
+          </Link>
+        ) : (
+          <Button
+            // className={"loginBtn"}
+            type="text"
+            onClick={() => {
+              removeUserInfo("accessToken");
+              setUser(null);
+            }}
+          >
+            Logout
+          </Button>
+        )}
         <div className={"searchWrapper"}>
           {searchVisible && (
             <Input
@@ -89,10 +112,12 @@ export default function Header() {
           <Link href="/design_philosophy">Design Philosophy</Link>
           <Link href="/career">Career</Link>
           <Link href="/nrb">NRB</Link>
-
-          <Link href="/login" onClick={closeDrawer}>
-            Login
-          </Link>
+          {user?.userId && <Link href="/dashboard">Dashboard</Link>}
+          {!user?.userId && (
+            <Link href="/login" onClick={closeDrawer}>
+              Login
+            </Link>
+          )}
         </div>
       </Drawer>
     </header>

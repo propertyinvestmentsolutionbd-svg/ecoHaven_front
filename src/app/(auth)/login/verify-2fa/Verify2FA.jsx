@@ -20,8 +20,12 @@ const Verify2FA = () => {
   const [codeSent, setCodeSent] = useState(false);
   const [userVerification] = useUserVerificationMutation();
   const tempToken = searchParams.get("tempToken");
-  const data = getUserInfo();
-  console.log({ data });
+  useEffect(() => {
+    const userInfo = getUserInfo();
+    if (userInfo?.userId) {
+      router.replace("/");
+    }
+  }, []);
 
   useEffect(() => {
     if (!tempToken) {
