@@ -10,6 +10,7 @@ import StatsSection from "@/components/Landing/Stats";
 import Partners from "@/components/Landing/Partners";
 import RoyalStandard from "@/components/Landing/PhotoSlider";
 import GalleriesSection from "@/components/Landing/Gallery";
+import BlogsSection from "@/components/Landing/Blogs";
 
 export default function Employees() {
   return (
@@ -22,6 +23,7 @@ export default function Employees() {
 
       <YouTubeSection />
       <StatsSection />
+      <BlogsSection />
       <Partners />
     </>
   );

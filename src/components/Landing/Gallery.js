@@ -7,8 +7,6 @@ const GalleriesSection = () => {
   const carouselRef = useRef(null);
   const { data } = useAllGalleryQuery();
 
-  console.log({ data });
-
   // Use actual data from API, fallback to empty array if no data
   const galleryImages =
     data?.data?.map((item) => ({

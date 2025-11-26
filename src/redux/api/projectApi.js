@@ -77,7 +77,7 @@ const projectApi = baseApi.injectEndpoints({
     allGallery: build.query({
       query: () => {
         return {
-          url: `/project/all-gallery`,
+          url: `/project/galleries`,
           method: "GET",
           // params: arg,
         };
