@@ -18,7 +18,7 @@ export default function BLogById() {
           src={
             blog?.imageUrl
               ? `http://localhost:5000${blog.imageUrl}`
-              : `dummy.jpg`
+              : `/dummy.jpg`
           }
           alt="Careers Background"
           fill
@@ -34,6 +34,15 @@ export default function BLogById() {
         </div>
       </section>
       <section className="careers-page">
+        <h4
+          style={{
+            textAlign: "center",
+            fontSize: "1.2rem",
+            margin: "2rem auto",
+          }}
+        >
+          {blog.title}
+        </h4>
         <div className="careers-container">
           <div className="loading-state">{blog.description}</div>
         </div>
