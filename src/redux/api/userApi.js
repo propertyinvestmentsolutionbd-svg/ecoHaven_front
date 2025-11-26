@@ -59,6 +59,21 @@ const userApi = baseApi.injectEndpoints({
       //   };
       // },
     }),
+    getAgent: build.query({
+      query: () => {
+        return {
+          url: `/agent`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+      // transformResponse: (response: IService[], meta: IMeta) => {
+      //   return {
+      //     services: response,
+      //     meta,
+      //   };
+      // },
+    }),
     getEmpDropdown: build.query({
       query: () => {
         return {
@@ -95,4 +110,5 @@ export const {
   useRemoveUserMutation,
   useGetEmpDropdownQuery,
   useUpdatePermissionsMutation,
+  useGetAgentQuery,
 } = userApi;

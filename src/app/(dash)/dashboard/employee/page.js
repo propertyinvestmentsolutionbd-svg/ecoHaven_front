@@ -153,11 +153,23 @@ const ManageEmployees = () => {
       contactNo: employee.contactNo,
       role: employee.role,
       designation: employee.designation || "",
+      country: employee.country || "",
       address: employee.address || "",
       linkedinUrl: employee.linkedinUrl || "",
       profileDescription: employee.profileDescription || "",
       agentDescription: employee.agentDescription || "",
     });
+    // Set current profile image if exists
+    if (employee.profileImg) {
+      setFileList([
+        {
+          uid: "-1",
+          name: "current-profile.jpg",
+          status: "done",
+          url: `http://localhost:5000${employee.profileImg}`,
+        },
+      ]);
+    }
     setIsAgent(employee.isAgent || false);
     setIsFeatured(employee.isFeatured || false);
     setIsModalVisible(true);
@@ -245,7 +257,7 @@ const ManageEmployees = () => {
           isAgent: isAgent,
           isActive: true,
           twofaEnabled: true,
-          country: "",
+          country: values?.country,
           removeProfileImage:
             fileList.length === 0 && editingEmployee.profileImg, // Remove image if no new file selected
         };
@@ -298,7 +310,7 @@ const ManageEmployees = () => {
         formData.append("isAgent", isAgent.toString());
         formData.append("isActive", "true");
         formData.append("twofaEnabled", "true");
-        formData.append("country", "");
+        formData.append("country", values?.country || "");
 
         if (values.password) {
           formData.append("password", values.password);
@@ -368,7 +380,7 @@ const ManageEmployees = () => {
 
   const uploadProps = {
     fileList,
-    onChange: ({ fileList }) => setFileList(fileList),
+    onChange: ({ fileList: newFileList }) => setFileList(newFileList),
     beforeUpload: () => false,
     listType: "picture-card",
     accept: "image/*",
@@ -518,19 +530,34 @@ const ManageEmployees = () => {
             <Form.Item
               name="designation"
               label="Designation"
-              rules={[
-                { required: true, message: "Please select a designation!" },
-              ]}
+              rules={[{ required: true, message: "designation is required!" }]}
               initialValue=""
               className="form-item-half"
             >
-              <Select
+              {/* <Select
                 options={[
                   { value: "HR", label: "HR" },
                   { value: "CEO", label: "CEO" },
                 ]}
                 placeholder="Select Designation"
-              />
+              /> */}
+              <Input placeholder="HR" prefix={<UserOutlined />} />
+            </Form.Item>
+            <Form.Item
+              name="country"
+              label="Country"
+              rules={[{ required: true, message: "Country is required" }]}
+              initialValue=""
+              className="form-item-half"
+            >
+              {/* <Select
+                options={[
+                  { value: "HR", label: "HR" },
+                  { value: "CEO", label: "CEO" },
+                ]}
+                placeholder="Select Designation"
+              /> */}
+              <Input placeholder="Bangladesh" />
             </Form.Item>
             <Form.Item
               name="isAgent"
