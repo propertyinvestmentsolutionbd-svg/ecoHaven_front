@@ -83,6 +83,15 @@ const projectApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getStats: build.query({
+      query: () => {
+        return {
+          url: `/stats`,
+          method: "GET",
+          // params: arg,
+        };
+      },
+    }),
     getProjectsById: build.query({
       query: (id) => {
         return {
@@ -116,4 +125,5 @@ export const {
   useAllGalleryQuery,
   useGetProjectLocationDropDownQuery,
   useGetProjectsByIdQuery,
+  useGetStatsQuery,
 } = projectApi;
