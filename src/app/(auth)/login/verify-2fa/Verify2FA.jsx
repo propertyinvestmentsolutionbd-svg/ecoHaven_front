@@ -223,7 +223,7 @@ const Verify2FA = () => {
             icon={<ReloadOutlined />}
             onClick={handleResendCode}
             loading={resendLoading}
-            // disabled={timeLeft > 240} // Can resend after 1 minute
+            disabled={timeLeft > 240} // Can resend after 1 minute
             className="resend-button"
           >
             {resendLoading ? "SENDING..." : "Send new code"}
