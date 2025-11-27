@@ -13,6 +13,13 @@ const userApi = baseApi.injectEndpoints({
         // },
       }),
     }),
+    forgetPass: build.mutation({
+      query: (payload) => ({
+        url: `/forgot_password`,
+        method: "post",
+        data: payload,
+      }),
+    }),
     userLogin: build.mutation({
       query: (loginData) => ({
         url: `/auth/signin`,
@@ -111,4 +118,5 @@ export const {
   useGetEmpDropdownQuery,
   useUpdatePermissionsMutation,
   useGetAgentQuery,
+  useForgetPassMutation,
 } = userApi;
