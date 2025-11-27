@@ -103,6 +103,13 @@ const userApi = baseApi.injectEndpoints({
         data: payload,
       }),
     }),
+    resend2FACode: build.mutation({
+      query: (data) => ({
+        url: "/resend-2fa",
+        method: "POST",
+        data,
+      }),
+    }),
   }),
   //   overrideExisting: false,
 });
@@ -119,4 +126,5 @@ export const {
   useUpdatePermissionsMutation,
   useGetAgentQuery,
   useForgetPassMutation,
+  useResend2FACodeMutation,
 } = userApi;

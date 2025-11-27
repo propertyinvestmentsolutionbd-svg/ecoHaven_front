@@ -5,20 +5,29 @@ import {
   SafetyCertificateOutlined,
   MailOutlined,
   ClockCircleOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useUserVerificationMutation } from "@/redux/api/userApi";
+import {
+  useResend2FACodeMutation,
+  useUserVerificationMutation,
+} from "@/redux/api/userApi";
 import { getUserInfo, storeUserInfo } from "@/utils/helper";
+import { toast } from "react-toastify";
 
 const Verify2FA = () => {
   const [form] = Form.useForm();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [resendLoading, setResendLoading] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const [codeSent, setCodeSent] = useState(false);
   const [userVerification] = useUserVerificationMutation();
+  const [resend2FACode] = useResend2FACodeMutation();
+
   const tempToken = searchParams.get("tempToken");
   useEffect(() => {
     const userInfo = getUserInfo();
@@ -78,15 +87,34 @@ const Verify2FA = () => {
     }
   };
 
-  const resendCode = () => {
-    setCodeSent(true);
-    setTimeLeft(300); // Reset to 5 minutes
+  const handleResendCode = async () => {
+    setResendLoading(true);
     setError("");
 
-    // Show success message
-    setTimeout(() => {
-      setCodeSent(false);
-    }, 3000);
+    try {
+      const response = await resend2FACode({ tempToken }).unwrap();
+
+      setCodeSent(true);
+      setTimeLeft(300); // Reset to 5 minutes
+
+      // Update URL with new tempToken if provided
+      if (response.data?.tempToken) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("tempToken", response.data.tempToken);
+        window.history.replaceState({}, "", newUrl.toString());
+      }
+
+      toast.success("New verification code sent!");
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setCodeSent(false);
+      }, 3000);
+    } catch (err) {
+      setError(err.data?.message || "Failed to resend code. Please try again.");
+    } finally {
+      setResendLoading(false);
+    }
   };
 
   const formatTime = (seconds) => {
@@ -188,18 +216,19 @@ const Verify2FA = () => {
         </Form>
 
         {/* Resend Code Section */}
-        {/* <div className="resend-section">
+        <div className="resend-section">
           <p className="resend-text">Didn't receive the code?</p>
           <Button
             type="link"
             icon={<ReloadOutlined />}
-            onClick={resendCode}
-            disabled={timeLeft > 240} // Can resend after 1 minute
+            onClick={handleResendCode}
+            loading={resendLoading}
+            // disabled={timeLeft > 240} // Can resend after 1 minute
             className="resend-button"
           >
-            Send new code
+            {resendLoading ? "SENDING..." : "Send new code"}
           </Button>
-        </div> */}
+        </div>
 
         {/* Back to Login */}
         <div className="back-to-login">
