@@ -5,6 +5,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import "./ManageBlogs.css";
 import { toast } from "react-toastify";
 import { useGetBlogsQuery, useRemoveBlogsMutation } from "@/redux/api/blogsApi";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const ManageBlogs = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -183,7 +184,7 @@ const ManageBlogs = () => {
         ? `http://localhost:5000/api/v1/blogs/${editingBlog.id}`
         : "http://localhost:5000/api/v1/blogs";
 
-      const method = editingBlog ? "PUT" : "POST";
+      const method = editingBlog ? "put" : "post";
 
       console.log("Submitting blog data:", {
         editing: !!editingBlog,
@@ -191,12 +192,15 @@ const ManageBlogs = () => {
         hasImage: fileList.length > 0,
         isNewImage: fileList[0]?.originFileObj ? true : false,
       });
-
-      const response = await fetch(url, {
-        method,
-        body: formData,
-        credentials: "include",
-      });
+      // const response = await fetch(url, {
+      //   method,
+      //   body: formData,
+      //   credentials: "include",
+      //   headers: {
+      //     Authorization: acToken,
+      //   },
+      // });
+      const response = await fetchWithAuth[method](url, formData);
 
       const result = await response.json();
 

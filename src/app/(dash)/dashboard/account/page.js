@@ -88,10 +88,10 @@ const Account = () => {
         };
 
         const res = await userPassChange(passwordPayload).unwrap();
-        console.log({ res });
         if (res.success) {
           toast.success(res.message || "Password changed successfully");
           setIsEditing(false);
+          refetch();
         }
       }
     } catch (error) {

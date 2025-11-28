@@ -38,6 +38,7 @@ import "./profile.css";
 import { getUserInfo } from "@/utils/helper";
 import { useUserProfileQuery } from "@/redux/api/userApi";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -156,13 +157,14 @@ const Profile = () => {
       }
 
       // Call update API with fetch
-      const response = await fetch(
+      const response = await fetchWithAuth.put(
         `http://localhost:5000/api/v1/${userId}/with-image`,
-        {
-          method: "PUT",
-          body: formData,
-          credentials: "include",
-        }
+        formData
+        // {
+        //   method: "PUT",
+        //   body: formData,
+        //   credentials: "include",
+        // }
       );
 
       const result = await response.json();

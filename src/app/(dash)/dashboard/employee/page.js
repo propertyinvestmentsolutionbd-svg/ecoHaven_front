@@ -33,6 +33,7 @@ import {
   useUserCreateMutation,
 } from "@/redux/api/userApi";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const ManageEmployees = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -271,13 +272,14 @@ const ManageEmployees = () => {
         }
 
         // Call update API
-        const response = await fetch(
+        const response = await fetchWithAuth.put(
           `http://localhost:5000/api/v1/${editingEmployee.id}/with-image`,
-          {
-            method: "PUT",
-            body: formData,
-            credentials: "include",
-          }
+          formData
+          // {
+          //   method: "PUT",
+          //   body: formData,
+          //   credentials: "include",
+          // }
         );
 
         const result = await response.json();
@@ -345,13 +347,14 @@ const ManageEmployees = () => {
         }
 
         // Use fetch for create
-        const response = await fetch(
+        const response = await fetchWithAuth.post(
           "http://localhost:5000/api/v1/auth/signup",
-          {
-            method: "POST",
-            body: formData,
-            credentials: "include",
-          }
+          formData
+          // {
+          //   method: "POST",
+          //   body: formData,
+          //   credentials: "include",
+          // }
         );
 
         const result = await response.json();

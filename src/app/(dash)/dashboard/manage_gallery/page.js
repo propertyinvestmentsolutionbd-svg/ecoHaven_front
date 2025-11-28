@@ -26,6 +26,7 @@ import {
   useRemoveProjectGalleryItemMutation,
 } from "@/redux/api/projectApi";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const ManageGallery = () => {
   const [form] = Form.useForm();
@@ -221,15 +222,25 @@ const ManageGallery = () => {
         category: values.category,
         files: fileList.length,
       });
+      const acToken = localStorage.getItem("accessToken");
+
+      console.log({ acToken });
 
       // Call the API
-      const response = await fetch(
+      // const response = await fetch(
+      //   `http://localhost:5000/api/v1/project/${values.projectId}/gallery-items`,
+      //   {
+      //     method: "POST",
+      //     body: formData,
+      //     credentials: "include",
+      //     headers: {
+      //       Authorization: acToken,
+      //     },
+      //   }
+      // );
+      const response = await fetchWithAuth.post(
         `http://localhost:5000/api/v1/project/${values.projectId}/gallery-items`,
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
+        formData
       );
 
       const result = await response.json();

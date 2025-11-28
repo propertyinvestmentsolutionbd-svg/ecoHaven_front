@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { instance } from "./axiosInstance";
 
 export const getBaseUrl = () => {
   return "http://localhost:5000/api/v1";
@@ -46,4 +47,12 @@ export const removeUserInfo = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("accessToken");
   }
+};
+export const getNewAccessToken = async () => {
+  return await instance({
+    url: `${getBaseUrl()}/auth/refresh-token`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    withCredentials: true,
+  });
 };

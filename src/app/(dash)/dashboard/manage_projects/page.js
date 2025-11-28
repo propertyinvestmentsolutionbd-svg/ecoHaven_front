@@ -30,6 +30,7 @@ import {
   useRemoveProjectMutation,
 } from "@/redux/api/projectApi";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const ManageProjects = () => {
   const [form] = Form.useForm();
@@ -386,16 +387,17 @@ const ManageProjects = () => {
         ? `http://localhost:5000/api/v1/project/${editingProject.id}/update/with-files`
         : "http://localhost:5000/api/v1/createProject/with-files";
 
-      const method = editingProject ? "PUT" : "POST";
+      const method = editingProject ? "put" : "post";
 
       console.log(`Calling ${method} ${url}`);
 
       // Call the API
-      const response = await fetch(url, {
-        method,
-        body: formData,
-        credentials: "include",
-      });
+      // const response = await fetch(url, {
+      //   method,
+      //   body: formData,
+      //   credentials: "include",
+      // });
+      const response = await fetchWithAuth[method](url, formData);
 
       const result = await response.json();
 

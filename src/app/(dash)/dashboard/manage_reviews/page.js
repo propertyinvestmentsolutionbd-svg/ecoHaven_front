@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   Upload,
-  message,
   Card,
   Typography,
   Tag,
@@ -17,7 +16,6 @@ import {
   DeleteOutlined,
   PlusOutlined,
   UserOutlined,
-  PictureOutlined,
 } from "@ant-design/icons";
 import "./ManageReviews.css";
 import Image from "next/image";
@@ -26,6 +24,7 @@ import {
   useRemoveReviewMutation,
 } from "@/redux/api/reviewsApi";
 import { toast } from "react-toastify";
+import { fetchWithAuth } from "@/utils/fetchAuth";
 
 const ManageReviews = () => {
   const { data: reviewsData, isLoading, refetch } = useGetReviewsQuery();
@@ -213,13 +212,14 @@ const ManageReviews = () => {
         ? `http://localhost:5000/api/v1/reviews/${editingReview.id}`
         : "http://localhost:5000/api/v1/reviews";
 
-      const method = editingReview ? "PUT" : "POST";
+      const method = editingReview ? "put" : "post";
 
-      const response = await fetch(url, {
-        method,
-        body: formData,
-        credentials: "include",
-      });
+      // const response = await fetch(url, {
+      //   method,
+      //   body: formData,
+      //   credentials: "include",
+      // });
+      const response = await fetchWithAuth[method](url, formData);
 
       const result = await response.json();
 
